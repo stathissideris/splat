@@ -3,6 +3,7 @@
             [camel-snake-kebab.core :refer :all])
   (:import [splat.ast
             CodeFile
+            Statements
             PreDirective
             Function
             FunctionCall
@@ -15,7 +16,9 @@
 (defn double-quote [s] (str "\"" s "\""))
 (defn single-quote [s] (str "'" s "'"))
 (defn angle-quote [s] (str "<" s ">"))
-(defn block [expr] (str "{\n" (str/join ";\n" (remove nil? expr)) ";\n}\n"))
+(defn statements [s] (let [s (remove nil? s)]
+                       (str (str/join ";\n" s) (when (> (count s) 1) ";\n"))))
+(defn block [expr] (str "{\n" (statements expr) "}\n"))
 (defn commas [expr] (str/join ", " (remove nil? expr)))
 (defn spaces [expr] (str/join " " (remove nil? expr)))
 (defn lines [expr] (str/join "\n" (remove nil? expr)))
@@ -24,6 +27,9 @@
 
 (defmethod emit CodeFile [n]
   (lines (map emit (:expressions n))))
+
+(defmethod emit Statements [s]
+  (statements (map emit (:statements s))))
 
 (defmethod emit PreDirective [{:keys [directive params]}]
   (str "#"

@@ -9,6 +9,7 @@
        (~(symbol (str name \.)) ~@params))))
 
 (ast-node CodeFile [expressions])
+(ast-node Statements [statements])
 (ast-node PreDirective [directive params])
 (ast-node Function [declaration params body])
 (ast-node FunctionCall [name params])

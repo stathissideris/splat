@@ -93,6 +93,13 @@
 
 (declare parse)
 
+(defn- parse-assignment [node]
+  (let [pairs (partition 2 (rest node))]
+    (ast/statements
+     (for [[decl value] pairs]
+       (ast/assignment (parse-var-declaration decl)
+                       (parse value))))))
+
 (defn- parse-position [z]
   (let [node (zip/node z)]
     (cond (pre-directive? node)
@@ -106,8 +113,7 @@
           (ast/arithmetic-op (first node) (rest node))
 
           (assign? node)
-          (ast/assignment (parse-var-declaration (second node))
-                          (parse (last node)))
+          (parse-assignment node)
 
           (array-access? node)
           (let [[_ name index] node]
