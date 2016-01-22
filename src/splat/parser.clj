@@ -103,9 +103,8 @@
           (ast/arithmetic-op (first node) (rest node))
 
           (assign? node)
-          (let [node (rest node)]
-            (ast/assignment (parse-var-declaration (butlast node))
-                            (parse (last node))))
+          (ast/assignment (parse-var-declaration (second node))
+                          (parse (last node)))
           
           (function-call? node)
           (if (= 'return (first node))
