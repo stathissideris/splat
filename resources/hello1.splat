@@ -1,5 +1,5 @@
-(include "stdio.h")
+(!include stdio.h)
 
-(defn main []
-  (printfn "Hello world\n")
+(defn int main []
+  (printf "Hello world\n")
   (return 0))

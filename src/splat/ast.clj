@@ -12,4 +12,6 @@
 (ast-node PreDirective [directive params])
 (ast-node Function [name return-type params body])
 (ast-node FunctionCall [name params])
+(ast-node ArithmeticOp [op params])
+(ast-node Declaration [name types const? restrict? volatile? extern? pointer? void?])
 (ast-node Return [value])

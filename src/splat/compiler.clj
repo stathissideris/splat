@@ -14,9 +14,9 @@
       (.exec (into-array String ["clang" (str in) "-o" (str out)]))))
 
 (defn compile-file [input-file]
-  (let [code-file (fs/file (fs/parent "resources/hello2.splat")
-                           (str (fs/name "resources/hello2.splat") ".c"))
-        compiled-file (fs/file (fs/parent "resources/hello2.splat")
-                               (fs/name "resources/hello2.splat"))]
+  (let [code-file (fs/file (fs/parent input-file)
+                           (str (fs/name input-file) ".c"))
+        compiled-file (fs/file (fs/parent input-file)
+                               (fs/name input-file))]
     (transpile-file input-file code-file)
     (clang code-file compiled-file)))

@@ -1,5 +1,8 @@
 (!include stdio.h)
 
+(defn int add [const int a . const int b . const int c]
+  (return (+ a b c)))
+
 (defn int main []
   (printf "Hello world\n")
-  (return 0))
+  (return (add 1 2 3)))

@@ -51,6 +51,41 @@
 (defn- function-call? [node]
   (and (list? node) (symbol? (first node))))
 
+(defn- arithmetic-op? [node]
+  (and (list? node)
+       (#{'+ '- '/ '*} (first node))))
+
+(defn- var-name [s]
+  (-> s str (str/replace "*" "") symbol))
+
+(defn- pointer-name? [s]
+  (-> s str (str/starts-with? "*")))
+
+(defn- parse-var-declaration [tokens]
+  (let [d (ast/map->Declaration {:name     (var-name (last tokens))
+                                 :pointer? (pointer-name? (last tokens))
+                                 :types    []})]
+    (loop [tokens (butlast tokens)
+           d      d]
+      (if-not (seq? tokens)
+        d
+        (recur
+         (next tokens)
+         (let [t (first tokens)]
+           (condp = t
+             'const    (assoc d :const? true)
+             'restrict (assoc d :restrict? true)
+             'volatile (assoc d :volatile? true)
+             'extern   (assoc d :extern? true)
+             'void     (assoc d :void? true)
+             (update d :types conj t))))))))
+
+(defn- parse-function-params [params]
+  (->> params
+       (partition-by (fn [x] (= x '.)))
+       (take-nth 2)
+       (map parse-var-declaration)))
+
 (defn- parse-position [z]
   (let [node (zip/node z)]
     (cond (pre-directive? node)
@@ -58,8 +93,11 @@
 
           (function-def? node)
           (let [[_ return-type name params & body] node]
-            (ast/function name return-type params body))
+            (ast/function name return-type (parse-function-params params) body))
 
+          (arithmetic-op? node)
+          (ast/arithmetic-op (first node) (rest node))
+          
           (function-call? node)
           (if (= 'return (first node))
             (ast/return (second node))
