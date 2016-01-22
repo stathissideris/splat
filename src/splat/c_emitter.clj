@@ -7,6 +7,7 @@
             FunctionCall
             ArithmeticOp
             Declaration
+            Assignment
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
@@ -54,6 +55,9 @@
      (when volatile? "volatile")]
     types
     [(str (when pointer? "*") name)])))
+
+(defmethod emit Assignment [{:keys [declaration value]}]
+  (spaces [(emit declaration) "=" (emit value)]))
 
 (defmethod emit Return [n]
   (str "return " (emit (:value n))))

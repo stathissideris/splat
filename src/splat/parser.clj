@@ -55,6 +55,9 @@
   (and (list? node)
        (#{'+ '- '/ '*} (first node))))
 
+(defn assign? [node]
+  (and (list? node) (= '=> (first node))))
+
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))
 
@@ -86,6 +89,8 @@
        (take-nth 2)
        (map parse-var-declaration)))
 
+(declare parse)
+
 (defn- parse-position [z]
   (let [node (zip/node z)]
     (cond (pre-directive? node)
@@ -97,6 +102,11 @@
 
           (arithmetic-op? node)
           (ast/arithmetic-op (first node) (rest node))
+
+          (assign? node)
+          (let [node (rest node)]
+            (ast/assignment (parse-var-declaration (butlast node))
+                            (parse (last node))))
           
           (function-call? node)
           (if (= 'return (first node))
@@ -106,8 +116,8 @@
           :else node)))
 
 (defn parse [source]
-  (ast/code-file
-   (transform-zipper-backwards (generic-zipper source) parse-position)))
+  (transform-zipper-backwards (generic-zipper source) parse-position))
 
 (defn parse-file [filename]
-  (parse (util/read-edn filename)))
+  (ast/code-file
+   (parse (util/read-edn filename))))
