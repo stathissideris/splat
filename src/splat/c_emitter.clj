@@ -11,6 +11,7 @@
             Declaration
             Assignment
             ArrayAccess
+            ArraySet
             FloatLiteral
             LongLiteral
             Return]))
@@ -71,6 +72,9 @@
 
 (defmethod emit ArrayAccess [{:keys [name index]}]
   (str (->snake_case name) "[" (emit index) "]"))
+
+(defmethod emit ArraySet [{:keys [name index value]}]
+  (apply str (->snake_case name) "[" (emit index) "] = " (emit value)))
 
 (defmethod emit Return [n]
   (str "return " (emit (:value n))))

@@ -10,7 +10,19 @@
   (printf "The first area is %d and the second %d\n"
           (aget areas 0)
           (aget areas (- (+ 1 1) 1)))
+
+  (aset! areas 0 100)
+  (aset! areas 1 200)
+  (printf "And now, the first area is %d and the second %d\n"
+          (aget areas 0)
+          (aget areas 1))
   
   (printf "name=\"%s\" and full_name=\"%s\"\n" name full-name)
+
+  (set! x:int 10)
+  (printf "x:%d\n" x)
+
+  (set! x (+ x 1))
+  (printf "x:%d\n" x)
   
   (return 0))

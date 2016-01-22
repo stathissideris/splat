@@ -17,6 +17,7 @@
 (ast-node Declaration [name types const? restrict? volatile? extern? pointer? void? array? array-size])
 (ast-node Assignment [declaration value])
 (ast-node ArrayAccess [name index])
+(ast-node ArraySet [name index value])
 (ast-node Return [value])
 
 (ast-node FloatLiteral [x])

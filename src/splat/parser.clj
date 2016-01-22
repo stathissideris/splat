@@ -50,8 +50,7 @@
 (defn- first= [coll item]
   (and (list? coll) (= item (first coll))))
 
-(defn- function-def? [node]
-  (first= node 'defn))
+(defn- function-def? [node] (first= node 'defn))
 
 (defn- function-call? [node]
   (and (list? node) (symbol? (first node))))
@@ -60,11 +59,9 @@
   (and (list? node)
        (#{'+ '- '/ '*} (first node))))
 
-(defn assign? [node]
-  (first= node 'set!))
-
-(defn array-access? [node]
-  (and (list? node) (= 'aget (first node))))
+(defn assign? [node] (first= node 'set!))
+(defn array-access? [node] (first= node 'aget))
+(defn array-set? [node] (first= node 'aset!))
 
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))
@@ -129,6 +126,10 @@
           (array-access? node)
           (let [[_ name index] node]
            (ast/array-access name index))
+
+          (array-set? node)
+          (let [[_ name index value] node]
+            (ast/array-set name index value))
 
           (function-call? node)
           (if (= 'return (first node))
