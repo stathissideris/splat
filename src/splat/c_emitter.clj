@@ -1,5 +1,6 @@
 (ns splat.c-emitter
-  (:require [clojure.string :as str])
+  (:require [clojure.string :as str]
+            [camel-snake-kebab.core :refer :all])
   (:import [splat.ast
             CodeFile
             PreDirective
@@ -11,6 +12,7 @@
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
+(defn single-quote [s] (str "'" s "'"))
 (defn angle-quote [s] (str "<" s ">"))
 (defn block [expr] (str "{\n" (str/join ";\n" (remove nil? expr)) ";\n}\n"))
 (defn commas [expr] (str/join ", " (remove nil? expr)))
@@ -36,15 +38,10 @@
   (str (emit declaration) "(" (commas (map emit params)) ")" (block (map emit body))))
 
 (defmethod emit FunctionCall [{:keys [name params]}]
-  (str name "(" (commas (map (fn [p] (if (string? p) (emit p) p)) params)) ")"))
+  (str name "(" (commas (map emit params)) ")"))
 
 (defmethod emit ArithmeticOp [{:keys [op params]}]
   (str "(" (str/join (str " " op " ") (map emit params)) ")"))
-
-(defmethod emit String [s]
-  (-> s
-      (str/replace "\n" "\\n") ;;TODO much more here
-      double-quote))
 
 (defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void? array?]}]
   (spaces
@@ -55,12 +52,22 @@
      (when restrict? "restrict")
      (when volatile? "volatile")]
     types
-    [(str (when pointer? "*") name (when array? "[]"))])))
+    [(str (when pointer? "*") (->snake_case name) (when array? "[]"))])))
 
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))
 
 (defmethod emit Return [n]
   (str "return " (emit (:value n))))
+
+(defmethod emit String [s]
+  (-> s
+      (str/replace "\n" "\\n") ;;TODO much more here
+      double-quote))
+
+(defmethod emit Character [s] (single-quote s))
+
+(defmethod emit clojure.lang.Symbol [s]
+  (->snake_case s))
 
 (defmethod emit :default [n] (str n))
