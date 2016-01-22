@@ -47,8 +47,11 @@
     (let [x (first node)]
       (and (symbol? x) (str/starts-with? (name x) "!")))))
 
+(defn- first= [coll item]
+  (and (list? coll) (= item (first coll))))
+
 (defn- function-def? [node]
-  (and (list? node) (= 'defn (first node))))
+  (first= node 'defn))
 
 (defn- function-call? [node]
   (and (list? node) (symbol? (first node))))
@@ -58,7 +61,7 @@
        (#{'+ '- '/ '*} (first node))))
 
 (defn assign? [node]
-  (and (list? node) (= '=> (first node))))
+  (first= node 'set!))
 
 (defn array-access? [node]
   (and (list? node) (= '. (first node))))

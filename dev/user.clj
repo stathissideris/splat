@@ -3,3 +3,7 @@
 
 (defn refresh []
   (clojure.tools.namespace.repl/refresh))
+
+(defn dev []
+  (require 'dev)
+  (in-ns 'dev))
