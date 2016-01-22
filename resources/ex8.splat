@@ -7,8 +7,10 @@
   
   (printf "The size of an int: %ld\n" (sizeof int))
   (printf "The size of areas: %ld\n" (sizeof areas))
-  (printf "The first area is %d and the second %d\n" (. areas 0) (. areas (- (+ 1 1) 1)))
-
+  (printf "The first area is %d and the second %d\n"
+          (aget areas 0)
+          (aget areas (- (+ 1 1) 1)))
+  
   (printf "name=\"%s\" and full_name=\"%s\"\n" name full-name)
   
   (return 0))

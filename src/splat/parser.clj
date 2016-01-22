@@ -64,7 +64,7 @@
   (first= node 'set!))
 
 (defn array-access? [node]
-  (and (list? node) (= '. (first node))))
+  (and (list? node) (= 'aget (first node))))
 
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))
