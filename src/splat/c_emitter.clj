@@ -9,6 +9,7 @@
             ArithmeticOp
             Declaration
             Assignment
+            ArrayAccess
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
@@ -57,17 +58,27 @@
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))
 
+(defmethod emit ArrayAccess [{:keys [name index]}]
+  (str (->snake_case name) "[" (emit index) "]"))
+
 (defmethod emit Return [n]
   (str "return " (emit (:value n))))
 
 (defmethod emit String [s]
   (-> s
-      (str/replace "\n" "\\n") ;;TODO much more here
+      (str/replace "\n" "\\n")
+      (str/replace "\"" "\\\"") ;;TODO much more here
       double-quote))
 
 (defmethod emit Character [s] (single-quote s))
 
 (defmethod emit clojure.lang.Symbol [s]
   (->snake_case s))
+
+(defmethod emit clojure.lang.APersistentVector [v]
+  (spaces ["{" (commas (map emit v)) "}"]))
+
+(defmethod emit nil [_]
+  "NULL")
 
 (defmethod emit :default [n] (str n))

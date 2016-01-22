@@ -58,6 +58,9 @@
 (defn assign? [node]
   (and (list? node) (= '=> (first node))))
 
+(defn array-access? [node]
+  (and (list? node) (= '. (first node))))
+
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))
 
@@ -105,7 +108,11 @@
           (assign? node)
           (ast/assignment (parse-var-declaration (second node))
                           (parse (last node)))
-          
+
+          (array-access? node)
+          (let [[_ name index] node]
+           (ast/array-access name index))
+
           (function-call? node)
           (if (= 'return (first node))
             (ast/return (second node))
