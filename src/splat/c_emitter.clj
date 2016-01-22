@@ -32,8 +32,8 @@
                  (angle-quote p)
                  (double-quote p))) params))))
 
-(defmethod emit Function [{:keys [name return-type params body]}]
-  (str return-type " " name "(" (commas (map emit params)) ")" (block (map emit body))))
+(defmethod emit Function [{:keys [declaration params body]}]
+  (str (emit declaration) "(" (commas (map emit params)) ")" (block (map emit body))))
 
 (defmethod emit FunctionCall [{:keys [name params]}]
   (str name "(" (commas (map (fn [p] (if (string? p) (emit p) p)) params)) ")"))
@@ -46,15 +46,16 @@
       (str/replace "\n" "\\n") ;;TODO much more here
       double-quote))
 
-(defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void?]}]
+(defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void? array?]}]
   (spaces
    (concat
     [(when extern? "extern")
      (when const? "const")
+     (when void? "void")
      (when restrict? "restrict")
      (when volatile? "volatile")]
     types
-    [(str (when pointer? "*") name)])))
+    [(str (when pointer? "*") name (when array? "[]"))])))
 
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))

@@ -1,8 +1,8 @@
 (!include stdio.h)
 
-(defn int add [const int a . const int b . const int c]
+(defn add:int [a:const:int, b:int, c:int]
   (return (+ a b c)))
 
-(defn int main []
+(defn main:int [argc:int *argv:char:array]
   (printf "Hello world\n")
   (return (add 1 2 3)))

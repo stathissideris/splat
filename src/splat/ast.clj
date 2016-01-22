@@ -10,9 +10,9 @@
 
 (ast-node CodeFile [expressions])
 (ast-node PreDirective [directive params])
-(ast-node Function [name return-type params body])
+(ast-node Function [declaration params body])
 (ast-node FunctionCall [name params])
 (ast-node ArithmeticOp [op params])
-(ast-node Declaration [name types const? restrict? volatile? extern? pointer? void?])
+(ast-node Declaration [name types const? restrict? volatile? extern? pointer? void? array?])
 (ast-node Assignment [declaration value])
 (ast-node Return [value])

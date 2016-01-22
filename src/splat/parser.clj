@@ -64,11 +64,12 @@
 (defn- pointer-name? [s]
   (-> s str (str/starts-with? "*")))
 
-(defn- parse-var-declaration [tokens]
-  (let [d (ast/map->Declaration {:name     (var-name (last tokens))
-                                 :pointer? (pointer-name? (last tokens))
+(defn- parse-var-declaration [decl]
+  (let [tokens (-> decl str (str/split #":"))
+        d (ast/map->Declaration {:name     (var-name (first tokens))
+                                 :pointer? (pointer-name? (first tokens))
                                  :types    []})]
-    (loop [tokens (butlast tokens)
+    (loop [tokens (rest tokens)
            d      d]
       (if-not (seq? tokens)
         d
@@ -76,18 +77,16 @@
          (next tokens)
          (let [t (first tokens)]
            (condp = t
-             'const    (assoc d :const? true)
-             'restrict (assoc d :restrict? true)
-             'volatile (assoc d :volatile? true)
-             'extern   (assoc d :extern? true)
-             'void     (assoc d :void? true)
+             "const"    (assoc d :const? true)
+             "restrict" (assoc d :restrict? true)
+             "volatile" (assoc d :volatile? true)
+             "extern"   (assoc d :extern? true)
+             "void"     (assoc d :void? true)
+             "array"    (assoc d :array? true)
              (update d :types conj t))))))))
 
 (defn- parse-function-params [params]
-  (->> params
-       (partition-by (fn [x] (= x '.)))
-       (take-nth 2)
-       (map parse-var-declaration)))
+  (map parse-var-declaration params))
 
 (declare parse)
 
@@ -97,8 +96,8 @@
           (ast/pre-directive (first node) (rest node))
 
           (function-def? node)
-          (let [[_ return-type name params & body] node]
-            (ast/function name return-type (parse-function-params params) body))
+          (let [[_ decl params & body] node]
+            (ast/function (parse-var-declaration decl) (parse-function-params params) body))
 
           (arithmetic-op? node)
           (ast/arithmetic-op (first node) (rest node))
