@@ -2,7 +2,8 @@
   (:require [splat.tools :as tools]
             [splat.parser :as parser]
             [splat.c-emitter :as emitter]
-            [clojure.tools.namespace.repl :refer [clear refresh-all]]))
+            [clojure.tools.namespace.repl :refer [clear refresh-all]]
+            [clojure.pprint :refer [pprint]]))
 
 (defn refresh []
   (clojure.tools.namespace.repl/refresh))

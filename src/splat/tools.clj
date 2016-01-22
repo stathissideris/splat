@@ -11,7 +11,7 @@
 
 (defn clang [in out]
   (-> (Runtime/getRuntime)
-      (.exec (into-array String ["clang" (str in) "-o" (str out)]))
+      (.exec (into-array String ["clang" (str in) "-g" "-o" (str out)]))
       .waitFor))
 
 (defn compile-file [input-file]

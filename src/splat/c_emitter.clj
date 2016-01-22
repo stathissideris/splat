@@ -52,7 +52,7 @@
 (defmethod emit ArithmeticOp [{:keys [op params]}]
   (str "(" (str/join (str " " op " ") (map emit params)) ")"))
 
-(defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void? array?]}]
+(defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void? array? array-size]}]
   (spaces
    (concat
     [(when extern? "extern")
@@ -61,7 +61,10 @@
      (when restrict? "restrict")
      (when volatile? "volatile")]
     types
-    [(str (when pointer? "*") (->snake_case name) (when array? "[]"))])))
+    [(str (when pointer? "*")
+          (->snake_case name)
+          (when array?
+            (if-not array-size "[]" (str "[" array-size "]"))))])))
 
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))

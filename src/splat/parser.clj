@@ -72,6 +72,10 @@
 (defn- pointer-name? [s]
   (-> s str (str/starts-with? "*")))
 
+(defn- parse-int [s]
+  (try (Integer/parseInt s)
+       (catch Exception _ nil)))
+
 (defn- parse-var-declaration [decl]
   (let [tokens (-> decl str (str/split #":"))
         d (ast/map->Declaration {:name     (var-name (first tokens))
@@ -84,14 +88,16 @@
         (recur
          (next tokens)
          (let [t (first tokens)]
-           (condp = t
-             "const"    (assoc d :const? true)
-             "restrict" (assoc d :restrict? true)
-             "volatile" (assoc d :volatile? true)
-             "extern"   (assoc d :extern? true)
-             "void"     (assoc d :void? true)
-             "array"    (assoc d :array? true)
-             (update d :types conj t))))))))
+           (if-let [x (parse-int t)]
+             (assoc d :array-size x)
+             (condp = t
+               "const"    (assoc d :const? true)
+               "restrict" (assoc d :restrict? true)
+               "volatile" (assoc d :volatile? true)
+               "extern"   (assoc d :extern? true)
+               "void"     (assoc d :void? true)
+               "array"    (assoc d :array? true)
+               (update d :types conj t)))))))))
 
 (defn- parse-function-params [params]
   (map parse-var-declaration params))

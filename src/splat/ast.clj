@@ -14,7 +14,7 @@
 (ast-node Function [declaration params body])
 (ast-node FunctionCall [name params])
 (ast-node ArithmeticOp [op params])
-(ast-node Declaration [name types const? restrict? volatile? extern? pointer? void? array?])
+(ast-node Declaration [name types const? restrict? volatile? extern? pointer? void? array? array-size])
 (ast-node Assignment [declaration value])
 (ast-node ArrayAccess [name index])
 (ast-node Return [value])
