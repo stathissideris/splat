@@ -18,3 +18,6 @@
 (ast-node Assignment [declaration value])
 (ast-node ArrayAccess [name index])
 (ast-node Return [value])
+
+(ast-node FloatLiteral [x])
+(ast-node LongLiteral [x])

@@ -2,8 +2,9 @@
 
 (defn main:int [argc:int *argv:char:array]
   (=> distance:int 100)
-  (=> power:float 2.345)
-  (=> super-power:double 56789.4532)
+  (=> power:float #float 2.345)
+  (=> super-power:double 56789.4532
+      long-test:long #long 100)
   (=> initial:char \A)
   (=> first-name:char:array "Stathis")
   (=> last-name:char:array "Shaw")

@@ -11,7 +11,9 @@
   value (will throw an exception)."
   [x]
   (zip/zipper
-   (some-fn sequential? map?)
+   (fn [x]
+     (and (not (record? x))
+          (or (sequential? x) (map? x))))
    seq
    (fn [node children]
      (cond (vector? node) (vec children)

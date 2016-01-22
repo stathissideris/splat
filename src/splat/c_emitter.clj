@@ -11,6 +11,8 @@
             Declaration
             Assignment
             ArrayAccess
+            FloatLiteral
+            LongLiteral
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
@@ -83,6 +85,12 @@
 
 (defmethod emit clojure.lang.APersistentVector [v]
   (spaces ["{" (commas (map emit v)) "}"]))
+
+(defmethod emit FloatLiteral [x]
+  (str (:x x) "f"))
+
+(defmethod emit LongLiteral [x]
+  (str (:x x) "L"))
 
 (defmethod emit nil [_]
   "NULL")
