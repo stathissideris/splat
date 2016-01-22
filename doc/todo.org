@@ -1,0 +1,6 @@
+* TODO
+- Syntax for pointer to pointer
+- Syntax for high dimensional arrays
+- Syntax for float literals and for long literals
+- Allow multiple assignments at the same time
+
