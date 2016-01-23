@@ -69,7 +69,9 @@
   (str (->snake_case name) (paren (commas (map emit params)))))
 
 (defmethod emit ArithmeticOp [{:keys [op params]}]
-  (str (paren (str/join (str " " op " ") (map emit params)))))
+  (if (= 1 (count params))
+    (paren (str op " " (emit params)))
+    (str (paren (str/join (str " " op " ") (map emit params))))))
 
 (defmethod emit Type [{:keys [types const? restrict?
                               volatile? extern? pointer?

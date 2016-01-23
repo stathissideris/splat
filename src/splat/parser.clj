@@ -5,6 +5,17 @@
             [splat.ast :as ast]
             [splat.util :as util]))
 
+(def bit-operator->sym
+  {'bit-or  (symbol "|")
+   'bit-and (symbol "&")
+   'bit-xor (symbol "^")
+   'bit-not (symbol "~")
+   '>>      (symbol ">>")
+   '<<      (symbol "<<")})
+
+(defn bit-operator? [n]
+  (and (list? n) (get (set (keys bit-operator->sym)) (first n))))
+
 (defn generic-zipper
   "Walks vectors, lists, maps, and maps' keys and values
   individually. Take care not to replace a keypair with a single
@@ -53,9 +64,10 @@
 (defn- function-call? [node]
   (and (list? node) (symbol? (first node))))
 
-(defn- arithmetic-op? [node]
+(defn- operator? [node]
   (and (list? node)
-       (#{'+ '- '/ '* '< '> '<= '>= '== '!=} (first node))))
+       (#{'+ '- '/ '* '< '> '<= '>= '== '!=}
+        (first node))))
 
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))
@@ -116,7 +128,7 @@
 
 (defn- parse-position [z]
   (let [node (zip/node z)]
-    (cond (arithmetic-op? node)
+    (cond (operator? node)
           (ast/->ArithmeticOp (first node) (rest node))
 
           (pre-directive? node)
@@ -159,6 +171,10 @@
           (first= node 'sizeof)
           (let [[_ t] node]
             (ast/->FunctionCall 'sizeof [(parse-type t)]))
+
+          (bit-operator? node)
+          (let [[op & params] node]
+            (ast/->ArithmeticOp (bit-operator->sym op) params))
 
           (function-call? node)
           (if (= 'return (first node))

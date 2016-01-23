@@ -1,0 +1,12 @@
+(!include stdio.h)
+
+(defn main:int [argc:int *argv:char:array]
+
+  (printf "(>> 8 2) => %d\n" (>> 8 2))
+  (printf "(<< 8 2) => %d\n" (<< 8 2))
+  (printf "(| 8 16) => %d\n" (bit-or 8 16))
+  (printf "(& 8 16) => %d\n" (bit-and 8 16))
+  (printf "(^ 8 16) => %d\n" (bit-xor 8 16))
+  (printf "(~ 8) => %d\n" (bit-not 8))
+
+  (return 0))
