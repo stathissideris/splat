@@ -134,6 +134,10 @@
           (first= node 'for)
           (let [[_ init pred index & body] node]
             (ast/for-loop init pred index body))
+
+          (first= node 'while)
+          (let [[_ pred & body] node]
+            (ast/while-loop pred body))
           
           (function-call? node)
           (if (= 'return (first node))

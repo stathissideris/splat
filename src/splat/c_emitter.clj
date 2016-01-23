@@ -15,11 +15,13 @@
             FloatLiteral
             LongLiteral
             ForLoop
+            WhileLoop
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
 (defn single-quote [s] (str "'" s "'"))
 (defn angle-quote [s] (str "<" s ">"))
+(defn paren [s] (str "(" s ")"))
 (defn statements [s]
   (let [s (remove nil? s)]
     (str (str/join ";\n" s) ";\n")))
@@ -50,13 +52,13 @@
                  (double-quote p))) params))))
 
 (defmethod emit Function [{:keys [declaration params body]}]
-  (str (emit declaration) "(" (commas (map emit params)) ")" (block (map emit body))))
+  (str (emit declaration) (paren (commas (map emit params)))  (block (map emit body))))
 
 (defmethod emit FunctionCall [{:keys [name params]}]
-  (str name "(" (commas (map emit params)) ")"))
+  (str name (paren (commas (map emit params)))))
 
 (defmethod emit ArithmeticOp [{:keys [op params]}]
-  (str "(" (str/join (str " " op " ") (map emit params)) ")"))
+  (str (paren (str/join (str " " op " ") (map emit params)))))
 
 (defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void? array? array-size]}]
   (spaces
@@ -82,7 +84,11 @@
   (apply str (->snake_case name) "[" (emit index) "] = " (emit value)))
 
 (defmethod emit ForLoop [{:keys [init pred next body]}]
-  (str "for(" (str/join "; " (map emit [init pred next])) ")"
+  (str "for" (paren (str/join "; " (map emit [init pred next])))
+       (block (map emit body))))
+
+(defmethod emit WhileLoop [{:keys [pred body]}]
+  (str "while" (paren (emit pred))
        (block (map emit body))))
 
 (defmethod emit Return [n]

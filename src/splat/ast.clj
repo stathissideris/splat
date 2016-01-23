@@ -19,6 +19,7 @@
 (ast-node ArrayAccess [name index])
 (ast-node ArraySet [name index value])
 (ast-node ForLoop [init pred next body])
+(ast-node WhileLoop [pred body])
 (ast-node Return [value])
 
 (ast-node FloatLiteral [x])
