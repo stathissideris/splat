@@ -7,7 +7,7 @@
             PreDirective
             Function
             FunctionCall
-            ArithmeticOp
+            OpApplication
             Declaration
             Type
             StructDef
@@ -18,6 +18,7 @@
             LongLiteral
             ForLoop
             WhileLoop
+            IfThenElse
             LetBlock
             Return]))
 
@@ -29,17 +30,26 @@
          (str/replace "-" "_")
          (str/replace guard "->")))))
 
-(defn double-quote [s] (str "\"" s "\""))
-(defn single-quote [s] (str "'" s "'"))
-(defn angle-quote [s] (str "<" s ">"))
-(defn paren [s] (str "(" s ")"))
-(defn statements [s]
-  (let [s (remove nil? s)]
-    (str (str/join ";\n" s) ";\n")))
-(defn block [expr] (str "{\n" (statements expr) "}\n"))
-(defn commas [expr] (str/join ", " (remove nil? expr)))
-(defn spaces [expr] (str/join " " (remove nil? expr)))
-(defn lines [expr] (str/join "\n" (remove nil? expr)))
+(defn check-str [s]
+  (if-not (or (string? s) (symbol? s))
+    (throw (ex-info (str "Not a string or symbol: " (pr-str s)) {:v s}))
+    s))
+(defn check-coll [c]
+  (if-not (or (seq? c) (list? c) (vector? c))
+    (throw (ex-info (str "Not a list or vector: " (pr-str c)) {:v c}))
+    c))
+
+(defn double-quote [s] (str "\"" (check-str s) "\""))
+(defn single-quote [s] (str "'" (check-str s) "'"))
+(defn angle-quote [s] (str "<" (check-str s) ">"))
+(defn paren [s] (str "(" (check-str s) ")"))
+(defn statements [st]
+  (let [st (remove nil? (check-coll st))]
+    (str (str/join ";\n" st) ";\n")))
+(defn block [expr] (str "{\n" (statements (check-coll expr)) "}\n"))
+(defn commas [expr] (str/join ", " (remove nil? (check-coll expr))))
+(defn spaces [expr] (str/join " " (remove nil? (check-coll expr))))
+(defn lines [expr] (str/join "\n" (remove nil? (check-coll expr))))
 
 (defmulti emit class)
 
@@ -68,7 +78,7 @@
 (defmethod emit FunctionCall [{:keys [name params]}]
   (str (->snake_case name) (paren (commas (map emit params)))))
 
-(defmethod emit ArithmeticOp [{:keys [op params]}]
+(defmethod emit OpApplication [{:keys [op params]}]
   (if (= 1 (count params))
     (paren (str op " " (emit params)))
     (str (paren (str/join (str " " op " ") (map emit params))))))
@@ -114,6 +124,14 @@
 (defmethod emit WhileLoop [{:keys [pred body]}]
   (str "while" (paren (emit pred))
        (block (map emit body))))
+
+(defmethod emit IfThenElse [{:keys [test then else]}]
+  (str "if "
+       (paren (emit test))
+       " "
+       (block [(emit then)])
+       (if else
+         (str " else " (block [(emit else)])))))
 
 (defmethod emit LetBlock [{:keys [bindings body]}]
   (block (map emit (concat bindings body))))

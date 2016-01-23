@@ -1,5 +1,5 @@
 * TODO
-- if
+- do blocks
 - Syntax for pointer to pointer
 - Syntax for high dimensional arrays
 - Syntax for special characters '\0'

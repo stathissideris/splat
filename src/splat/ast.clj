@@ -6,7 +6,7 @@
 (defrecord PreDirective [directive params])
 (defrecord Function [declaration params body])
 (defrecord FunctionCall [name params])
-(defrecord ArithmeticOp [op params])
+(defrecord OpApplication [op params])
 (defrecord Declaration [name type])
 (defrecord Type [types const? restrict?
                  volatile? extern? pointer?
@@ -16,6 +16,7 @@
 (defrecord ArrayAccess [name index])
 (defrecord ArraySet [name index value])
 (defrecord ForLoop [init pred next body])
+(defrecord IfThenElse [test then else])
 (defrecord WhileLoop [pred body])
 (defrecord LetBlock [bindings body])
 (defrecord Return [value])
