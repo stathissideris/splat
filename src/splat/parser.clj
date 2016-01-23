@@ -138,7 +138,15 @@
           (first= node 'while)
           (let [[_ pred & body] node]
             (ast/while-loop pred body))
-          
+
+          (first= node 'let)
+          (let [[_ binds & body] node]
+            (def bb binds)
+            (ast/let-block (map (fn [[decl value]]
+                                  (ast/assignment
+                                   (parse-var-declaration decl)
+                                   (parse value))) (partition 2 binds)) body))
+
           (function-call? node)
           (if (= 'return (first node))
             (ast/return (second node))

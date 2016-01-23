@@ -1,6 +1,7 @@
 (ns splat.c-emitter
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :refer :all])
+            [camel-snake-kebab.core :refer :all]
+            [splat.ast :as ast])
   (:import [splat.ast
             CodeFile
             Statements
@@ -16,6 +17,7 @@
             LongLiteral
             ForLoop
             WhileLoop
+            LetBlock
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
@@ -90,6 +92,9 @@
 (defmethod emit WhileLoop [{:keys [pred body]}]
   (str "while" (paren (emit pred))
        (block (map emit body))))
+
+(defmethod emit LetBlock [{:keys [bindings body]}]
+  (block (map emit (concat bindings body))))
 
 (defmethod emit Return [n]
   (str "return " (emit (:value n))))

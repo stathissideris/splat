@@ -20,6 +20,7 @@
 (ast-node ArraySet [name index value])
 (ast-node ForLoop [init pred next body])
 (ast-node WhileLoop [pred body])
+(ast-node LetBlock [bindings body])
 (ast-node Return [value])
 
 (ast-node FloatLiteral [x])

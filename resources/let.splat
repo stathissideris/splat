@@ -1,0 +1,19 @@
+(!include stdio.h)
+
+;;from Learn C The Hard Way ex10
+
+(defn main:int [argc:int *argv:char:array]
+
+  (let [i:int 0]
+    (while (< i argc)
+      (printf "arg %d: %s\n" i (aget argv i))
+      (set! i (+ i 1))))
+  
+  (let [*states:char:array ["California" "Oregon" "Washington" "Texas"]
+        num-states:int     4
+        i:int              0]
+    (while (< i num-states)
+      (printf "state %d: %s\n" i (aget states i))
+      (set! i (+ i 1))))
+
+  (return 0))
