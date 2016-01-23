@@ -14,13 +14,15 @@
             ArraySet
             FloatLiteral
             LongLiteral
+            ForLoop
             Return]))
 
 (defn double-quote [s] (str "\"" s "\""))
 (defn single-quote [s] (str "'" s "'"))
 (defn angle-quote [s] (str "<" s ">"))
-(defn statements [s] (let [s (remove nil? s)]
-                       (str (str/join ";\n" s) (when (> (count s) 1) ";\n"))))
+(defn statements [s]
+  (let [s (remove nil? s)]
+    (str (str/join ";\n" s) ";\n")))
 (defn block [expr] (str "{\n" (statements expr) "}\n"))
 (defn commas [expr] (str/join ", " (remove nil? expr)))
 (defn spaces [expr] (str/join " " (remove nil? expr)))
@@ -32,7 +34,9 @@
   (lines (map emit (:expressions n))))
 
 (defmethod emit Statements [s]
-  (statements (map emit (:statements s))))
+  (if (= 1 (count s))
+    (-> s :statements first emit)
+    (statements (map emit (:statements s)))))
 
 (defmethod emit PreDirective [{:keys [directive params]}]
   (str "#"
@@ -75,6 +79,10 @@
 
 (defmethod emit ArraySet [{:keys [name index value]}]
   (apply str (->snake_case name) "[" (emit index) "] = " (emit value)))
+
+(defmethod emit ForLoop [{:keys [init pred next body]}]
+  (str "for(" (str/join "; " (map emit [init pred next])) ")"
+       (block (map emit body))))
 
 (defmethod emit Return [n]
   (str "return " (emit (:value n))))

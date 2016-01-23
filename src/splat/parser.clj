@@ -57,7 +57,7 @@
 
 (defn- arithmetic-op? [node]
   (and (list? node)
-       (#{'+ '- '/ '*} (first node))))
+       (#{'+ '- '/ '* '< '> '<= '>=} (first node))))
 
 (defn assign? [node] (first= node 'set!))
 (defn array-access? [node] (first= node 'aget))
@@ -131,6 +131,10 @@
           (let [[_ name index value] node]
             (ast/array-set name index value))
 
+          (first= node 'for)
+          (let [[_ init pred index & body] node]
+            (ast/for-loop init pred index body))
+          
           (function-call? node)
           (if (= 'return (first node))
             (ast/return (second node))
