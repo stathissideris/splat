@@ -10,7 +10,7 @@
 (defn *create-person:struct:Person
   [*name:char age:int height:int weight:int]
   (set! *who:struct:Person (malloc (sizeof struct:Person)))
-  ;;(assert (!= who nil)) ;;TODO problems with !=
+  (assert (!= who nil))
   (set! who->name (strdup name)
         who->age age
         who->height height

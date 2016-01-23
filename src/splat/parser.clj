@@ -116,15 +116,15 @@
 
 (defn- parse-position [z]
   (let [node (zip/node z)]
-    (cond (pre-directive? node)
+    (cond (arithmetic-op? node)
+          (ast/->ArithmeticOp (first node) (rest node))
+
+          (pre-directive? node)
           (ast/->PreDirective (first node) (rest node))
 
           (first= node 'defn)
           (let [[_ decl params & body] node]
             (ast/->Function (parse-var-declaration decl) (parse-function-params params) body))
-
-          (arithmetic-op? node)
-          (ast/->ArithmeticOp (first node) (rest node))
 
           (first= node 'set!)
           (parse-assignment node)
