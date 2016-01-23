@@ -1,0 +1,47 @@
+(!include stdio.h)
+(!include assert.h)
+(!include stdlib.h)
+(!include string.h)
+
+;;based on Learn C The Hard Way ex16
+
+(defstruct Person *name:char age:int height:int weight:int)
+
+(defn *create-person:struct:Person
+  [*name:char age:int height:int weight:int]
+  (set! *who:struct:Person (malloc (sizeof struct:Person)))
+  ;;(assert (!= who nil)) ;;TODO problems with !=
+  (set! who->name (strdup name)
+        who->age age
+        who->height height
+        who->weight weight)
+  (return who))
+
+(defn print-person:void [*who:struct:Person]
+  (printf "Name: %s\n" who->name)
+  (printf "\tAge: %d\n" who->age)
+  (printf "\tHeight: %d\n" who->height)
+  (printf "\tWeight: %d\n" who->weight))
+
+(defn destroy-person:void [*who:struct:Person]
+  (free who->name)
+  (free who))
+
+(defn main:int [argc:int *argv:char:array]
+  (set! *joe:struct:Person (create-person "Joe Alex" 32 64 140)
+        *frank:struct:Person (create-person "Frank Blank" 20 72 180))
+
+  (printf "Joe is at memory location %p:\n" joe)
+  (print-person joe)
+
+  (printf "Frank is at memory location %p:\n" frank)
+  (print-person frank)
+
+  (set! joe->age (+ joe->age 20)
+        joe->height (- joe->height 2)
+        joe->weight (+ joe->weight 40))
+  (print-person joe)
+  
+  (destroy-person joe)
+  (destroy-person frank)
+  (return 0))

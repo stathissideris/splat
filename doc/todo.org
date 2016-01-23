@@ -1,17 +1,10 @@
 * TODO
+- if
 - Syntax for pointer to pointer
 - Syntax for high dimensional arrays
 - Syntax for special characters '\0'
-- Syntax for defining array size
-- struct type modifier
-  (defn print-book:void [book:struct:Book] ...)
 - maybe make "void" optional for functions?
-- struct definition:
-  (struct
-    Book
-    title:char:array:50
-    author:char:array:50
-    book-id:int)
-- struct field access
-  (. book book-id)
-- struct field assignment
+- macro system
+- inc, dec, pre-inc?, pre-dec?
+- maybe add! and sub! for += and -= ?
+- sizeof does not work well on kebab-case vars

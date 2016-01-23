@@ -1,27 +1,24 @@
 (ns splat.ast
-  (:require [clojure.string :as str]
-            [camel-snake-kebab.core :refer :all]))
+  (:require [clojure.string :as str]))
 
-(defmacro ast-node [name params]
-  `(do
-     (defrecord ~name ~params)
-     (defn ~(->kebab-case name) ~params
-       (~(symbol (str name \.)) ~@params))))
+(defrecord CodeFile [expressions])
+(defrecord Statements [statements])
+(defrecord PreDirective [directive params])
+(defrecord Function [declaration params body])
+(defrecord FunctionCall [name params])
+(defrecord ArithmeticOp [op params])
+(defrecord Declaration [name type])
+(defrecord Type [types const? restrict?
+                 volatile? extern? pointer?
+                 void? struct? array? array-size])
+(defrecord StructDef [name members])
+(defrecord Assignment [declaration value])
+(defrecord ArrayAccess [name index])
+(defrecord ArraySet [name index value])
+(defrecord ForLoop [init pred next body])
+(defrecord WhileLoop [pred body])
+(defrecord LetBlock [bindings body])
+(defrecord Return [value])
 
-(ast-node CodeFile [expressions])
-(ast-node Statements [statements])
-(ast-node PreDirective [directive params])
-(ast-node Function [declaration params body])
-(ast-node FunctionCall [name params])
-(ast-node ArithmeticOp [op params])
-(ast-node Declaration [name types const? restrict? volatile? extern? pointer? void? array? array-size])
-(ast-node Assignment [declaration value])
-(ast-node ArrayAccess [name index])
-(ast-node ArraySet [name index value])
-(ast-node ForLoop [init pred next body])
-(ast-node WhileLoop [pred body])
-(ast-node LetBlock [bindings body])
-(ast-node Return [value])
-
-(ast-node FloatLiteral [x])
-(ast-node LongLiteral [x])
+(defrecord FloatLiteral [x])
+(defrecord LongLiteral [x])

@@ -1,7 +1,7 @@
 (!include stdio.h)
 
 (defn main:int [argc:int *argv:char:array]
-  (set! a:int:array:10 [])
+  (set! the-a:int:array:10 [])
   (set! b:int:array [1 2 3]) 
-  (printf "The size of array a: %ld\n" (sizeof a))
+  (printf "The size of array a: %ld\n" (sizeof the-a))
   (return 0))

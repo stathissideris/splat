@@ -44,24 +44,18 @@
 
 (defn- pre-directive? [node]
   (and (list? node)
-    (let [x (first node)]
-      (and (symbol? x) (str/starts-with? (name x) "!")))))
+       (let [x (first node)]
+         (and (symbol? x) (str/starts-with? (name x) "!")))))
 
 (defn- first= [coll item]
   (and (list? coll) (= item (first coll))))
-
-(defn- function-def? [node] (first= node 'defn))
 
 (defn- function-call? [node]
   (and (list? node) (symbol? (first node))))
 
 (defn- arithmetic-op? [node]
   (and (list? node)
-       (#{'+ '- '/ '* '< '> '<= '>=} (first node))))
-
-(defn assign? [node] (first= node 'set!))
-(defn array-access? [node] (first= node 'aget))
-(defn array-set? [node] (first= node 'aset!))
+       (#{'+ '- '/ '* '< '> '<= '>= '== '!=} (first node))))
 
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))
@@ -73,28 +67,40 @@
   (try (Integer/parseInt s)
        (catch Exception _ nil)))
 
+(defn- parse-type-tokens [tokens]
+  (loop [tokens tokens
+         d      {}]
+    (if-not (seq tokens)
+      d
+      (recur
+       (next tokens)
+       (let [t (first tokens)]
+         (if-let [x (parse-int t)]
+           (assoc d :array-size x)
+           (condp = t
+             "const"    (assoc d :const? true)
+             "restrict" (assoc d :restrict? true)
+             "volatile" (assoc d :volatile? true)
+             "extern"   (assoc d :extern? true)
+             "void"     (assoc d :void? true)
+             "struct"   (assoc d :struct? true)
+             "array"    (assoc d :array? true)
+             "*"        (assoc d :pointer? true)
+             (update d :types conj t))))))))
+
 (defn- parse-var-declaration [decl]
-  (let [tokens (-> decl str (str/split #":"))
-        d (ast/map->Declaration {:name     (var-name (first tokens))
-                                 :pointer? (pointer-name? (first tokens))
-                                 :types    []})]
-    (loop [tokens (rest tokens)
-           d      d]
-      (if-not (seq? tokens)
-        d
-        (recur
-         (next tokens)
-         (let [t (first tokens)]
-           (if-let [x (parse-int t)]
-             (assoc d :array-size x)
-             (condp = t
-               "const"    (assoc d :const? true)
-               "restrict" (assoc d :restrict? true)
-               "volatile" (assoc d :volatile? true)
-               "extern"   (assoc d :extern? true)
-               "void"     (assoc d :void? true)
-               "array"    (assoc d :array? true)
-               (update d :types conj t)))))))))
+  (let [tokens   (-> decl str (str/split #":"))
+        var-name (var-name (first tokens))
+        d        (ast/map->Declaration {:name var-name})
+        t        (merge (ast/map->Type {}) (parse-type-tokens (rest tokens)))
+        t        (if (pointer-name? (first tokens))
+                   (assoc t :pointer? true)
+                   t)]
+    (assoc d :type t)))
+
+(defn- parse-type [decl]
+  (let [tokens (-> decl str (str/split #":"))]
+    (merge (ast/map->Type {}) (parse-type-tokens tokens))))
 
 (defn- parse-function-params [params]
   (map parse-var-declaration params))
@@ -103,54 +109,61 @@
 
 (defn- parse-assignment [node]
   (let [pairs (partition 2 (rest node))]
-    (ast/statements
+    (ast/->Statements
      (for [[decl value] pairs]
-       (ast/assignment (parse-var-declaration decl)
-                       (parse value))))))
+       (ast/->Assignment (parse-var-declaration decl)
+                         (parse value))))))
 
 (defn- parse-position [z]
   (let [node (zip/node z)]
     (cond (pre-directive? node)
-          (ast/pre-directive (first node) (rest node))
+          (ast/->PreDirective (first node) (rest node))
 
-          (function-def? node)
+          (first= node 'defn)
           (let [[_ decl params & body] node]
-            (ast/function (parse-var-declaration decl) (parse-function-params params) body))
+            (ast/->Function (parse-var-declaration decl) (parse-function-params params) body))
 
           (arithmetic-op? node)
-          (ast/arithmetic-op (first node) (rest node))
+          (ast/->ArithmeticOp (first node) (rest node))
 
-          (assign? node)
+          (first= node 'set!)
           (parse-assignment node)
 
-          (array-access? node)
+          (first= node 'aget)
           (let [[_ name index] node]
-           (ast/array-access name index))
+            (ast/->ArrayAccess name index))
 
-          (array-set? node)
+          (first= node 'aset!)
           (let [[_ name index value] node]
-            (ast/array-set name index value))
+            (ast/->ArraySet name index value))
 
           (first= node 'for)
           (let [[_ init pred index & body] node]
-            (ast/for-loop init pred index body))
+            (ast/->ForLoop init pred index body))
 
           (first= node 'while)
           (let [[_ pred & body] node]
-            (ast/while-loop pred body))
+            (ast/->WhileLoop pred body))
 
           (first= node 'let)
           (let [[_ binds & body] node]
-            (def bb binds)
-            (ast/let-block (map (fn [[decl value]]
-                                  (ast/assignment
-                                   (parse-var-declaration decl)
-                                   (parse value))) (partition 2 binds)) body))
+            (ast/->LetBlock (map (fn [[decl value]]
+                                   (ast/->Assignment
+                                    (parse-var-declaration decl)
+                                    (parse value))) (partition 2 binds)) body))
+
+          (first= node 'defstruct)
+          (let [[_ name & members] node]
+            (ast/->StructDef name (map parse-var-declaration members)))
+
+          (first= node 'sizeof)
+          (let [[_ t] node]
+            (ast/->FunctionCall 'sizeof [(parse-type t)]))
 
           (function-call? node)
           (if (= 'return (first node))
-            (ast/return (second node))
-            (ast/function-call (first node) (rest node)))
+            (ast/->Return (second node))
+            (ast/->FunctionCall (first node) (rest node)))
 
           :else node)))
 
@@ -158,5 +171,5 @@
   (transform-zipper-backwards (generic-zipper source) parse-position))
 
 (defn parse-file [filename]
-  (ast/code-file
+  (ast/->CodeFile
    (parse (util/read-edn filename))))

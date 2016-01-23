@@ -1,6 +1,5 @@
 (ns splat.c-emitter
   (:require [clojure.string :as str]
-            [camel-snake-kebab.core :refer :all]
             [splat.ast :as ast])
   (:import [splat.ast
             CodeFile
@@ -10,6 +9,8 @@
             FunctionCall
             ArithmeticOp
             Declaration
+            Type
+            StructDef
             Assignment
             ArrayAccess
             ArraySet
@@ -19,6 +20,14 @@
             WhileLoop
             LetBlock
             Return]))
+
+(defn ->snake_case [s]
+  (when s
+    (let [guard "THISISASPLATARROW123456"] ;;TODO make less hacky
+     (-> s
+         (str/replace "->" guard)
+         (str/replace "-" "_")
+         (str/replace guard "->")))))
 
 (defn double-quote [s] (str "\"" s "\""))
 (defn single-quote [s] (str "'" s "'"))
@@ -57,24 +66,35 @@
   (str (emit declaration) (paren (commas (map emit params)))  (block (map emit body))))
 
 (defmethod emit FunctionCall [{:keys [name params]}]
-  (str name (paren (commas (map emit params)))))
+  (str (->snake_case name) (paren (commas (map emit params)))))
 
 (defmethod emit ArithmeticOp [{:keys [op params]}]
   (str (paren (str/join (str " " op " ") (map emit params)))))
 
-(defmethod emit Declaration [{:keys [name types const? restrict? volatile? extern? pointer? void? array? array-size]}]
+(defmethod emit Type [{:keys [types const? restrict?
+                              volatile? extern? pointer?
+                              void? struct? array? array-size]}]
   (spaces
    (concat
     [(when extern? "extern")
      (when const? "const")
      (when void? "void")
      (when restrict? "restrict")
-     (when volatile? "volatile")]
+     (when volatile? "volatile")
+     (when struct? "struct")]
     types
-    [(str (when pointer? "*")
-          (->snake_case name)
-          (when array?
-            (if-not array-size "[]" (str "[" array-size "]"))))])))
+    [(when pointer? "*")])))
+
+(defmethod emit Declaration [{:keys [name type]}]
+  (let [{:keys [array? array-size]} type]
+    (spaces
+     [(emit type)
+      (str (->snake_case name)
+           (when array?
+             (if-not array-size "[]" (str "[" array-size "]"))))])))
+
+(defmethod emit StructDef [{:keys [name members]}]
+  (str "struct " (->snake_case name) (block (map emit members)) ";"))
 
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))
@@ -102,7 +122,8 @@
 (defmethod emit String [s]
   (-> s
       (str/replace "\n" "\\n")
-      (str/replace "\"" "\\\"") ;;TODO much more here
+      (str/replace "\"" "\\\"")
+      (str/replace "\t" "\\t") ;;TODO much more here
       double-quote))
 
 (defmethod emit Character [s] (single-quote s))
