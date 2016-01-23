@@ -34,9 +34,10 @@
   (lines (map emit (:expressions n))))
 
 (defmethod emit Statements [s]
-  (if (= 1 (count s))
-    (-> s :statements first emit)
-    (statements (map emit (:statements s)))))
+  (let [s (:statements s)]
+    (if (= 1 (count s))
+      (-> s first emit)
+      (statements (map emit s)))))
 
 (defmethod emit PreDirective [{:keys [directive params]}]
   (str "#"
