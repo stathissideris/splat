@@ -80,7 +80,7 @@
 
 (defmethod emit OpApplication [{:keys [op params]}]
   (if (= 1 (count params))
-    (paren (str op " " (emit params)))
+    (paren (str op " " (emit (first params))))
     (str (paren (str/join (str " " op " ") (map emit params))))))
 
 (defmethod emit Type [{:keys [types const? restrict?
