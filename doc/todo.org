@@ -6,7 +6,6 @@
 - macro system
 - inc, dec, pre-inc?, pre-dec?
 - maybe add! and sub! for += and -= ?
-- sizeof does not work well on kebab-case vars
 - "deref" of pointers
 - access/pass things by reference? Is that a thing in C?
 - function pointers

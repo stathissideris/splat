@@ -94,7 +94,7 @@
      (when restrict? "restrict")
      (when volatile? "volatile")
      (when struct? "struct")]
-    types
+    (map ->snake_case types)
     [(when pointer? "*")])))
 
 (defmethod emit Declaration [{:keys [name type]}]
