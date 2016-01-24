@@ -1,5 +1,4 @@
 * TODO
-- do blocks
 - Syntax for pointer to pointer
 - Syntax for high dimensional arrays
 - Syntax for special characters '\0'
@@ -10,3 +9,5 @@
 - sizeof does not work well on kebab-case vars
 - "deref" of pointers
 - access/pass things by reference? Is that a thing in C?
+- function pointers
+- closures

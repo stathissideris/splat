@@ -142,6 +142,10 @@
           (pre-directive? node)
           (ast/->PreDirective (first node) (rest node))
 
+          (first= node 'do)
+          (let [[_ & body] node]
+            (ast/->Statements body))
+
           (first= node 'defn)
           (let [[_ decl params & body] node]
             (ast/->Function (parse-var-declaration decl) (parse-function-params params) body))
