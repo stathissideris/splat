@@ -31,7 +31,7 @@
          (str/replace guard "->")))))
 
 (defn check-str [s]
-  (if-not (or (string? s) (symbol? s))
+  (if-not (or (string? s) (symbol? s) (char? s))
     (throw (ex-info (str "Not a string or symbol: " (pr-str s)) {:v s}))
     s))
 (defn check-coll [c]
