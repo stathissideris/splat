@@ -1,7 +1,6 @@
 * To Do
   - Syntax for special characters '\0'
   - maybe make "void" optional for functions?
-  - macro system
   - inc, dec, pre-inc?, pre-dec?
   - maybe add! and sub! for += and -= ?
   - access/pass things by reference? Is that a thing in C?
