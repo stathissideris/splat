@@ -3,6 +3,7 @@
             [splat.ast :as ast])
   (:import [splat.ast
             CodeFile
+            NoOp
             Statements
             PreDirective
             Function
@@ -55,6 +56,8 @@
 
 (defmethod emit CodeFile [n]
   (lines (map emit (:expressions n))))
+
+(defmethod emit NoOp [n] "")
 
 (defmethod emit Statements [s]
   (let [s (:statements s)]

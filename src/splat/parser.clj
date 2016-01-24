@@ -16,7 +16,8 @@
    '<<      (symbol "<<")
    'and     (symbol "&&")
    'or      (symbol "||")
-   'not     (symbol "!")})
+   'not     (symbol "!")
+   'comma   ","})
 
 (defn translated-operator? [n]
   (and (seq? n) (get (set (keys translated-operator->sym)) (first n))))
@@ -100,7 +101,10 @@
 
 (defn- parse-node [z]
   (let [node (zip/node z)]
-    (cond (operator? node)
+    (cond (and (seq? node) (= node '()))
+          (ast/->NoOp)
+
+          (operator? node)
           (ast/->OpApplication (first node) (rest node))
 
           (translated-operator? node)

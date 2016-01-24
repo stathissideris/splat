@@ -8,17 +8,46 @@
         names:arr:char:ptr ["Alan" "Frank" "Mary" "John" "Lisa"]
         count:int (/ (sizeof ages) (sizeof int)))
 
-  ;;using indexing
+  ;;1. using indexing
   (for (set! i:int 0) (< i count) (set! i (+ i 1))
        (printf "%s has %d years alive.\n" (aget names i) (aget ages i)))
   (printf "---\n")
 
-  ;;using pointer arithmetic
+  ;;2. using pointer arithmetic
   (set! cur-age:int:ptr ages
         cur-name:char:ptr:ptr names)
   (for (set! i:int 0) (< i count) (set! i (+ i 1))
        (printf "%s has %d years alive.\n"
                (deref (+ cur-name i))
                (deref (+ cur-age i))))
-  
+  (printf "---\n")
+
+  ;;3. pointers are just arrays
+  (for (set! i:int 0) (< i count) (set! i (+ i 1))
+       (printf "%s has %d years alive.\n" (aget cur-name i) (aget cur-age i)))
+  (printf "---\n")
+
+  ;;4. stupid complex way
+  (for (comma (set! cur-name names)
+              (set! cur-age ages))
+       (< (- cur-age ages) count)
+       (comma (set! cur-name (+ cur-name 1))
+              (set! cur-age (+ cur-age 1)))
+     (printf "%s has %d years alive.\n"
+             (deref cur-name)
+             (deref cur-age)))
+  (printf "---\n")
+
+
+  ;;5. remix of the stupid way to check `for` syntax
+  (set! cur-name names
+        cur-age ages)
+  (for ()
+       (< (- cur-age ages) count)
+       (comma (set! cur-name (+ cur-name 1))
+              (set! cur-age (+ cur-age 1)))
+     (printf "%s has %d years alive.\n"
+             (deref cur-name)
+             (deref cur-age)))
+
   (return 0))

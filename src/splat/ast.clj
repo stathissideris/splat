@@ -2,6 +2,7 @@
   (:require [clojure.string :as str]))
 
 (defrecord CodeFile [expressions])
+(defrecord NoOp [])
 (defrecord Statements [statements])
 (defrecord PreDirective [directive params])
 (defrecord Function [declaration params body])
