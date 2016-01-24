@@ -2,9 +2,9 @@
 
 (defmacro trace [tag expr]
   `(do
-     (~'printf "Entering %s\n" ~tag)
+     (printf "Entering %s\n" ~tag)
      ~expr
-     (~'printf "Exiting %s\n" ~tag)))
+     (printf "Exiting %s\n" ~tag)))
 
 (defn main:int [argc:int *argv:char:array]
   (trace "addition"

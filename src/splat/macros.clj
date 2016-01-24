@@ -13,6 +13,19 @@
                        "cond requires an even number of forms")))
              (cons 'cond (next (next clauses))))))})
 
+(defn clean-up-macro
+  "The reader will qualify bare symbols when reading the macro, this
+  function will clean the namespace prefixes up."
+  [source]
+  (util/walk-zipper
+   (util/generic-zipper source)
+   (fn [z]
+     (let [node (zip/node z)]
+       (if (= 'quote node)
+         (let [namespaced-sym (-> z zip/right zip/node)]
+           (-> z zip/right (zip/replace (-> namespaced-sym name symbol))))
+         z)))))
+
 (defn extract-macros [source]
   (loop [zipper (util/generic-zipper source)
          macros {}]
@@ -24,7 +37,7 @@
             (let [[_ name & body] node]
               (recur
                (zip/next zipper)
-               (assoc macros name (eval (cons 'fn body)))))
+               (assoc macros name (eval (clean-up-macro (cons 'fn body))))))
 
             :else
             (recur (zip/next zipper) macros)))))
