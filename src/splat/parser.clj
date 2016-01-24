@@ -46,16 +46,21 @@
   (try (Integer/parseInt s)
        (catch Exception _ nil)))
 
+(defn- parse-array-spec [s]
+  (let [[_ size] (str/split s #"\.")]
+    (or size :empty)))
+
 (defn- parse-type-tokens [tokens]
   (loop [tokens tokens
-         d      {}]
+         d      {:pointer-level 0
+                 :arrays        []}]
     (if-not (seq tokens)
       d
       (recur
        (next tokens)
        (let [t (first tokens)]
-         (if-let [x (parse-int t)]
-           (assoc d :array-size x)
+         (if (str/starts-with? t "arr")
+           (update d :arrays conj (parse-array-spec t))
            (condp = t
              "const"    (assoc d :const? true)
              "restrict" (assoc d :restrict? true)
@@ -63,8 +68,8 @@
              "extern"   (assoc d :extern? true)
              "void"     (assoc d :void? true)
              "struct"   (assoc d :struct? true)
-             "array"    (assoc d :array? true)
-             "*"        (assoc d :pointer? true)
+             "arr"      (update d :array-level inc)
+             "ptr"      (update d :pointer-level inc)
              (update d :types conj t))))))))
 
 (defn- parse-var-declaration [decl]
@@ -151,10 +156,14 @@
           (let [[_ t] node]
             (ast/->FunctionCall 'sizeof [(parse-type t)]))
 
+          (first= node 'return)
+          (ast/->Return (second node))
+
+          (first= node 'deref)
+          (ast/->FunctionCall '* (rest node))
+          
           (function-call? node)
-          (if (= 'return (first node))
-            (ast/->Return (second node))
-            (ast/->FunctionCall (first node) (rest node)))
+          (ast/->FunctionCall (first node) (rest node))
 
           :else node)))
 

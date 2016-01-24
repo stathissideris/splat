@@ -3,7 +3,7 @@
 
 ;;based on Learn C The Hard Way ex12
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
 
   (cond (== argc 1)
         (printf "You only have one argument. You suck.\n")

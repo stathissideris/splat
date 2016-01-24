@@ -1,6 +1,6 @@
 (!include stdio.h)
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
 
   (printf "(>> 8 2) => %d\n" (>> 8 2))
   (printf "(<< 8 2) => %d\n" (<< 8 2))

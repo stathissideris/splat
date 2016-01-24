@@ -1,12 +1,12 @@
 * To Do
-  - Syntax for pointer to pointer
-  - Syntax for high dimensional arrays
   - Syntax for special characters '\0'
   - maybe make "void" optional for functions?
   - macro system
   - inc, dec, pre-inc?, pre-dec?
   - maybe add! and sub! for += and -= ?
-  - "deref" of pointers
   - access/pass things by reference? Is that a thing in C?
   - function pointers
+  - lambdas
   - closures
+  - generics?
+  - type inference?

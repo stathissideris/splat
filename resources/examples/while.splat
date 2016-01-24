@@ -2,14 +2,14 @@
 
 ;;from Learn C The Hard Way ex10
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
 
   (set! i:int 0)
   (while (< i argc)
     (printf "arg %d: %s\n" i (aget argv i))
     (set! i (+ i 1)))
 
-  (set! *states:char:array ["California" "Oregon" "Washington" "Texas"]
+  (set! states:arr:char:ptr ["California" "Oregon" "Washington" "Texas"]
         num-states:int 4
         i 0)
 

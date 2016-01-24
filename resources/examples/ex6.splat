@@ -1,13 +1,13 @@
 (!include stdio.h)
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
   (set! distance:int 100)
   (set! power:float #float 2.345)
   (set! super-power:double 56789.4532
         long-test:long #long 100)
   (set! initial:char \A)
-  (set! first-name:char:array "Stathis")
-  (set! last-name:char:array "Shaw")
+  (set! first-name:char:arr "Stathis")
+  (set! last-name:char:arr "Shaw")
   
   (printf "You are %d miles away.\n" distance)
   (printf "You have %f levels of power.\n" power)

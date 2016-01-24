@@ -1,6 +1,6 @@
 (!include stdio.h)
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
   (set! age:int 10)
   (set! height:int 72)
   

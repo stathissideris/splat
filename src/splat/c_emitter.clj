@@ -84,8 +84,8 @@
     (str (paren (str/join (str " " op " ") (map emit params))))))
 
 (defmethod emit Type [{:keys [types const? restrict?
-                              volatile? extern? pointer?
-                              void? struct? array? array-size]}]
+                              volatile? extern? pointer-level
+                              void? struct?]}]
   (spaces
    (concat
     [(when extern? "extern")
@@ -95,15 +95,21 @@
      (when volatile? "volatile")
      (when struct? "struct")]
     (map ->snake_case types)
-    [(when pointer? "*")])))
+    [(apply str (repeat pointer-level \*))])))
 
 (defmethod emit Declaration [{:keys [name type]}]
-  (let [{:keys [array? array-size]} type]
+  (let [{:keys [arrays]} type]
     (spaces
      [(emit type)
       (str (->snake_case name)
-           (when array?
-             (if-not array-size "[]" (str "[" array-size "]"))))])))
+           (apply str
+            (when (seq arrays)
+              (map
+               (fn [array-size]
+                 (if (= :empty array-size)
+                   "[]"
+                   (str "[" array-size "]")))
+               arrays))))])))
 
 (defmethod emit StructDef [{:keys [name members]}]
   (str "struct " (->snake_case name) (block (map emit members)) ";"))
@@ -160,7 +166,14 @@
 (defmethod emit LongLiteral [x]
   (str (:x x) "L"))
 
+(defmethod emit Number [x]
+  (str x))
+
+(defmethod emit Boolean [x]
+  (str x))
+
 (defmethod emit nil [_]
   "NULL")
 
-(defmethod emit :default [n] (str n))
+;;(defmethod emit :default [n] (str n))
+

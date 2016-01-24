@@ -3,6 +3,6 @@
 (defn add:int [a:const:int, b:int, c:int]
   (return (+ a b c)))
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
   (printf "Hello world\n")
   (return (add 1 2 3)))

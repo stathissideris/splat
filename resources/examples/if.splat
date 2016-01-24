@@ -2,7 +2,7 @@
 
 ;;based on Learn C The Hard Way ex12
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
 
   (if (not (== argc 2))
     (printf "argc is not 2\n"))

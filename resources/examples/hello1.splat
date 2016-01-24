@@ -1,5 +1,5 @@
 (!include stdio.h)
 
-(defn main:int [argc:int *argv:char:array]
+(defn main:int [argc:int argv:arr:char:ptr]
   (printf "Hello world\n")
   (return 0))

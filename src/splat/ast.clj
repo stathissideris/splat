@@ -9,8 +9,8 @@
 (defrecord OpApplication [op params])
 (defrecord Declaration [name type])
 (defrecord Type [types const? restrict?
-                 volatile? extern? pointer?
-                 void? struct? array? array-size])
+                 volatile? extern? pointer-level
+                 void? struct? arrays])
 (defrecord StructDef [name members])
 (defrecord Assignment [declaration value])
 (defrecord ArrayAccess [name index])

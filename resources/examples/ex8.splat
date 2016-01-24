@@ -1,9 +1,9 @@
 (!include stdio.h)
 
-(defn main:int [argc:int *argv:char:array]
-  (set! areas:int:array [10 12 13 14 20]
-        name:char:array "Zed"
-        full-name:char:array [\S \t \a \t \h \i \s 0])
+(defn main:int [argc:int argv:arr:char:ptr]
+  (set! areas:int:arr [10 12 13 14 20]
+        name:char:arr "Zed"
+        full-name:char:arr [\S \t \a \t \h \i \s 0])
   
   (printf "The size of an int: %ld\n" (sizeof int))
   (printf "The size of areas: %ld\n" (sizeof areas))
