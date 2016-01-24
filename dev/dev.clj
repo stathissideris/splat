@@ -13,7 +13,7 @@
 (def transpile-file tools/transpile-file)
 (def compile-file tools/compile-file)
 (def parse-file parser/parse-file)
-(def parse parser/parse)
+(def parse-source parser/parse-source)
 (def emit emitter/emit)
 
 (defn compile-all []

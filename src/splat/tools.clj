@@ -1,11 +1,15 @@
 (ns splat.tools
-  (:require [splat.parser :as parser]
+  (:require [splat.macros :as macros]
+            [splat.parser :as parser]
+            [splat.util :as util]
             [splat.c-emitter :as emitter]
             [me.raynes.fs :as fs])) 
 
 (defn transpile-file [input-file output-file]
   (->> input-file
-       parser/parse-file
+       util/read-edn
+       (macros/apply-macros macros/core-macros)
+       parser/parse-source
        emitter/emit
        (spit output-file)))
 
