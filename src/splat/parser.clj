@@ -19,22 +19,22 @@
    'not     (symbol "!")})
 
 (defn translated-operator? [n]
-  (and (list? n) (get (set (keys translated-operator->sym)) (first n))))
+  (and (seq? n) (get (set (keys translated-operator->sym)) (first n))))
 
 (defn- operator? [node]
-  (and (list? node)
+  (and (seq? node)
        (operators (first node))))
 
 (defn- pre-directive? [node]
-  (and (list? node)
+  (and (seq? node)
        (let [x (first node)]
          (and (symbol? x) (str/starts-with? (name x) "!")))))
 
 (defn- first= [coll item]
-  (and (list? coll) (= item (first coll))))
+  (and (seq? coll) (= item (first coll))))
 
 (defn- function-call? [node]
-  (and (list? node) (symbol? (first node))))
+  (and (seq? node) (symbol? (first node))))
 
 (defn- var-name [s]
   (-> s str (str/replace "*" "") symbol))

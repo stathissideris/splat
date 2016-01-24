@@ -1,0 +1,12 @@
+(!include stdio.h)
+
+(defmacro trace [tag expr]
+  `(do
+     (~'printf "Entering %s\n" ~tag)
+     ~expr
+     (~'printf "Exiting %s\n" ~tag)))
+
+(defn main:int [argc:int *argv:char:array]
+  (trace "addition"
+         (printf "%d\n" (+ 1 1)))
+  (return 0))

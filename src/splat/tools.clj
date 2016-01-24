@@ -6,12 +6,15 @@
             [me.raynes.fs :as fs])) 
 
 (defn transpile-file [input-file output-file]
-  (->> input-file
-       util/read-edn
-       (macros/apply-macros macros/core-macros)
-       parser/parse-source
-       emitter/emit
-       (spit output-file)))
+  (let [source (util/read-edn input-file)
+        macros (macros/extract-macros source)
+        source (macros/remove-macros source)]
+    ;;TODO add warning for shadowing macros
+    (->> source
+         (macros/apply-macros (merge macros/core-macros macros))
+         parser/parse-source
+         emitter/emit
+         (spit output-file))))
 
 (defn clang [in out]
   (-> (Runtime/getRuntime)
