@@ -1,0 +1,68 @@
+(!include stdio.h)
+(!include stdlib.h)
+(!include errno.h)
+(!include string.h)
+
+;;based on Learn C The Hard Way ex18
+
+(deftype (fn-ptr compare-fn:int [a:int b:int]))
+
+(defn die:void [message:char:ptr:const]
+  (if errno
+    (perror message)
+    (printf "ERROR: %s\n" message))
+  (exit 1))
+
+(defn bubble-sort:int:ptr [numbers:int:ptr count:int cmp:compare-fn]
+  (set! temp:int 0
+        target:int:ptr (malloc (* count (sizeof int))))
+
+  (if (not target) (die "Memory error."))
+
+  (memcpy target numbers (* count (sizeof int)))
+
+  (for (set! i:int 0) (< i count) (set! i (+ i 1))
+    (for (set! j:int 0) (< j (- count 1)) (set! j (+ j 1))
+      (when (> (cmp (aget target j) (aget target (+ j 1))) 0)
+        (set! temp (aget target (+ j 1)))
+        (aset! target (+ j 1) (aget target j))
+        (aset! target j temp))))
+
+  (return target))
+
+(defn sorted-order:int [a:int b:int] (return (- a b)))
+(defn reverse-order:int [a:int b:int] (return (- b a)))
+(defn strange-order:int [a:int b:int]
+  (if (or (== a 0) (== b 0))
+    (return 0)
+    (return (bit-and a b))))
+
+(defn test-sorting:void [numbers:int:ptr count:int cmp:compare-fn]
+  (set! sorted:int:ptr (bubble-sort numbers count cmp))
+  (if (not sorted) (die "Failed to sort as requested."))
+
+  (for (set! i:int 0) (< i count) (set! i (+ i 1))
+    (printf "%d " (aget sorted i)))
+
+  (printf "\n")
+
+  (free sorted))
+
+(defn main:int [argc:int argv:arr:char:ptr]
+
+  (if (< argc 2) (die "Usage: fn-ptr 3 5 2 1 8"))
+
+  (set! count:int (- argc 1)
+        inputs:char:ptr:ptr (+ argv 1)
+        numbers:int:ptr (malloc (* count (sizeof int))))
+
+  (if (not numbers) (die "Memory error."))
+
+  (for (set! i:int 0) (< i count) (set! i (+ i 1))
+    (aset! numbers i (atoi (aget inputs i))))
+
+  (test-sorting numbers count sorted-order)
+  (test-sorting numbers count reverse-order)
+  (test-sorting numbers count strange-order)
+
+  (return 0))

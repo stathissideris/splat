@@ -3,7 +3,8 @@
             [splat.util :as util]))
 
 (def core-macros
-  {'cond
+  {'when (fn [test & body] (list 'if test (cons 'do body)))
+   'cond
    (fn [& clauses]
      (when clauses
        (list 'if (first clauses)

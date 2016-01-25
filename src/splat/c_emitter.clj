@@ -10,6 +10,7 @@
             FunctionCall
             OpApplication
             Declaration
+            FunctionPointer
             DefType
             Type
             StructDef
@@ -122,6 +123,11 @@
 
 (defmethod emit DefType [{:keys [declaration]}]
   (str "typedef " (emit declaration)))
+
+(defmethod emit FunctionPointer [{:keys [return params]}]
+  (spaces [(emit (:type return))
+           (paren (str "*" (emit (:name return))))
+           (paren (commas (map emit params)))]))
 
 (defmethod emit ArrayAccess [{:keys [name index]}]
   (str (->snake_case name) "[" (emit index) "]"))

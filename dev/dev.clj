@@ -10,11 +10,11 @@
 (defn refresh []
   (clojure.tools.namespace.repl/refresh))
 
-(def transpile-file tools/transpile-file)
-(def compile-file tools/compile-file)
-(def parse-file parser/parse-file)
-(def parse-source parser/parse-source)
-(def emit emitter/emit)
+(def transpile-file #'tools/transpile-file)
+(def compile-file #'tools/compile-file)
+(def parse-file #'parser/parse-file)
+(def parse-source #'parser/parse-source)
+(def emit #'emitter/emit)
 
 (defn format-c-file [filename]
   (-> (Runtime/getRuntime)

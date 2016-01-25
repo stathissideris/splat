@@ -130,7 +130,15 @@
 
           (first= node 'deftype)
           (let [[_ decl] node]
-            (ast/->DefType (parse-var-declaration decl)))
+            (if (or (symbol? decl) (string? decl))
+              (ast/->DefType (parse-var-declaration decl))
+              (ast/->DefType decl)))
+
+          (first= node 'fn-ptr)
+          (let [[_ return params] node]
+            (ast/->FunctionPointer
+             (parse-var-declaration return)
+             (map parse-var-declaration params)))
 
           (first= node 'aget)
           (let [[_ name index] node]
@@ -150,6 +158,9 @@
 
           (first= node 'if)
           (let [[_ test then else] node]
+            (when (> (count node) 4)
+              (throw (ex-info "\"if\" can only have 3 expressions, test, then and else"
+                              {:node node})))
             (ast/->IfThenElse test then else))
           
           (first= node 'let)
