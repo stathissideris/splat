@@ -10,6 +10,7 @@
             FunctionCall
             OpApplication
             Declaration
+            DefType
             Type
             StructDef
             Assignment
@@ -22,7 +23,6 @@
             IfThenElse
             LetBlock
             Return]))
-
 (defn ->snake_case [s]
   (when s
     (let [guard "THISISASPLATARROW123456"] ;;TODO make less hacky
@@ -55,7 +55,7 @@
 (defmulti emit class)
 
 (defmethod emit CodeFile [n]
-  (lines (map emit (:expressions n))))
+  (statements (map emit (:expressions n))))
 
 (defmethod emit NoOp [n] "")
 
@@ -119,6 +119,9 @@
 
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))
+
+(defmethod emit DefType [{:keys [declaration]}]
+  (str "typedef " (emit declaration)))
 
 (defmethod emit ArrayAccess [{:keys [name index]}]
   (str (->snake_case name) "[" (emit index) "]"))

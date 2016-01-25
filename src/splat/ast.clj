@@ -9,6 +9,7 @@
 (defrecord FunctionCall [name params])
 (defrecord OpApplication [op params])
 (defrecord Declaration [name type])
+(defrecord DefType [declaration])
 (defrecord Type [types const? restrict?
                  volatile? extern? pointer-level
                  void? struct? arrays])

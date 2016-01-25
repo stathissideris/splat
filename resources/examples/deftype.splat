@@ -1,0 +1,32 @@
+(!include stdio.h)
+(!include string.h)
+
+;;from example in http://www.tutorialspoint.com/cprogramming/c_typedef.htm
+
+(deftype string:char:ptr)
+(deftype strings:string:arr)
+
+(defstruct
+ Book
+ title:char:arr.50
+ author:char:arr.50
+ subject:char:arr.100
+ book-id:int)
+(deftype Book:struct:Book) ;;there is no way to do this with a single
+                           ;;statement (but you could write a macro!)
+
+(defn main:int [argc:int argv:strings]
+
+  (declare book:Book)
+
+  (strcpy book.title "C Programming")
+  (strcpy book.author "Nuha Ali")
+  (strcpy book.subject "C Programming Tutorial")
+  (set! book.book-id 5984)
+
+  (printf "Title: %s\n" book.title)
+  (printf "Author: %s\n" book.author)
+  (printf "Subject: %s\n" book.subject)
+  (printf "ID: %d\n" book.book-id)
+
+  (return 0))

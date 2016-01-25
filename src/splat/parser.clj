@@ -121,9 +121,16 @@
           (first= node 'defn)
           (let [[_ decl params & body] node]
             (ast/->Function (parse-var-declaration decl) (parse-function-params params) body))
+          (first= node 'declare)
+          (let [[_ decl] node]
+            (parse-var-declaration decl))
 
           (first= node 'set!)
           (parse-assignment node)
+
+          (first= node 'deftype)
+          (let [[_ decl] node]
+            (ast/->DefType (parse-var-declaration decl)))
 
           (first= node 'aget)
           (let [[_ name index] node]
