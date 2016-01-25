@@ -6,6 +6,7 @@
 (defrecord Statements [statements])
 (defrecord PreDirective [directive params])
 (defrecord Function [declaration params body])
+(defrecord Lambda [return params body])
 (defrecord FunctionCall [name params])
 (defrecord OpApplication [op params])
 (defrecord Declaration [name type])
@@ -26,3 +27,8 @@
 
 (defrecord FloatLiteral [x])
 (defrecord LongLiteral [x])
+
+(defn code-file? [x] (instance? CodeFile x))
+(defn lambda? [x] (instance? Lambda x))
+(defn pre-directive? [x] (instance? PreDirective x))
+(defn statements? [x] (instance? Statements x))

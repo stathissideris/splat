@@ -4,8 +4,8 @@
   - inc, dec, pre-inc?, pre-dec?
   - maybe add! and sub! for += and -= ?
   - access/pass things by reference? Is that a thing in C?
-  - function pointers
-  - lambdas
+  - make the function's last statement to automatically be returned if
+    it isn't void
   - closures
   - generics?
   - type inference?

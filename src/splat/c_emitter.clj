@@ -164,28 +164,16 @@
       (str/replace "\t" "\\t") ;;TODO much more here
       double-quote))
 
-(defmethod emit Character [s] (single-quote s))
-
-(defmethod emit clojure.lang.Symbol [s]
-  (->snake_case s))
-
 (defmethod emit clojure.lang.APersistentVector [v]
   (spaces ["{" (commas (map emit v)) "}"]))
 
-(defmethod emit FloatLiteral [x]
-  (str (:x x) "f"))
-
-(defmethod emit LongLiteral [x]
-  (str (:x x) "L"))
-
-(defmethod emit Number [x]
-  (str x))
-
-(defmethod emit Boolean [x]
-  (str x))
-
-(defmethod emit nil [_]
-  "NULL")
-
+(defmethod emit Character [s] (single-quote s))
+(defmethod emit clojure.lang.Symbol [s] (->snake_case s))
+(defmethod emit FloatLiteral [x] (str (:x x) "f"))
+(defmethod emit LongLiteral [x] (str (:x x) "L"))
+(defmethod emit Number [x] (str x))
+(defmethod emit Boolean [x] (str x))
+(defmethod emit nil [_] "NULL")
 ;;(defmethod emit :default [n] (str n))
+
 

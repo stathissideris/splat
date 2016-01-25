@@ -53,6 +53,23 @@
            (map? node) (into {} children)))
    x))
 
+(defn- wipe-map [m]
+  (reduce (fn [m k] (assoc m k nil)) m (keys m)))
+
+(defn ast-zipper
+  "This will walk records."
+  [x]
+  (zip/zipper
+   (fn [x]
+     (or (sequential? x) (map? x)))
+   seq
+   (fn [node children]
+     (cond (vector? node) (vec children)
+           (list? node) (apply list children)
+           (seq? node) (seq children)
+           (map? node) (into (wipe-map node) children)))
+   x))
+
 (defn- zipper-last [zipper]
   (loop [zipper zipper]
     (if (zip/end? (zip/next zipper)) zipper (recur (zip/next zipper)))))

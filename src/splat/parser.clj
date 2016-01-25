@@ -121,6 +121,11 @@
           (first= node 'defn)
           (let [[_ decl params & body] node]
             (ast/->Function (parse-var-declaration decl) (parse-function-params params) body))
+
+          (first= node 'fn)
+          (let [[_ return params & body] node]
+            (ast/->Lambda (parse-type return) (parse-function-params params) body))
+
           (first= node 'declare)
           (let [[_ decl] node]
             (parse-var-declaration decl))

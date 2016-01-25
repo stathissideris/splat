@@ -3,17 +3,22 @@
             [splat.parser :as parser]
             [splat.c-emitter :as emitter]
             [splat.ast :as ast]
+            [splat.util :as util]
             [clojure.tools.namespace.repl :refer [clear refresh-all]]
             [clojure.pprint :refer [pprint]]
             [me.raynes.fs :as fs]))
 
+(def ex-folder "resources/examples/")
+
 (defn refresh []
   (clojure.tools.namespace.repl/refresh))
 
+(def read-file #'util/read-edn)
 (def transpile-file #'tools/transpile-file)
 (def compile-file #'tools/compile-file)
 (def parse-file #'parser/parse-file)
 (def parse-source #'parser/parse-source)
+(def macroexpand-source #'tools/macroexpand)
 (def emit #'emitter/emit)
 
 (defn format-c-file [filename]
