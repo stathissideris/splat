@@ -1,0 +1,40 @@
+(!include stdio.h)
+
+;;from Learn C The Hard Way ex10
+
+(defn main:int [argc:int argv:arr:char:ptr]
+
+  (let [x:int 1]
+    (while (< x argc)
+      (printf "arg %d: %s\n" x (aget argv x))
+      (set! x (+ x 1))))
+
+  ;;super-naive type inference is supported for let with literals (not for set!)
+  (let [states     ["California" "Oregon" "Washington" "Texas"]
+        states2    [["California" "Oregon" "Washington" "Texas"]
+                    ["California" "Oregon" "Texas"]]
+        nums       [1 2 3 4 5 6 7]
+        nums2      [[1 2 3 4 5 6]
+                    [1 2 3 4 5 6 7]]
+        nums3      [[[1] [2 0]]
+                    [[1] [2] [3] [9]]]
+        num-states 4
+        ii         0
+        ff         0.5
+        ll         0.6
+        ll2        0.7
+
+        name       "splat"
+        ;;foo      <none> ;;fails C compilation because you get a declaration without a type
+        foo:int    <none>
+        
+        ;;fail1    [a b c d e] ;;you get a cannot infer type of array exception
+        warning    [ii ff ll 2 name] ;;the crazy thing is that C compiles it with a warning
+        fine       [ii ii ii 1]
+        
+        i          0]
+    (while (< i num-states)
+      (printf "state %d: %s\n" i (aget states i))
+      (set! i (+ i 1))))
+
+  (return 0))

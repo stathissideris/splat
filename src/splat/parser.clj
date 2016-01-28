@@ -83,7 +83,7 @@
                    t)]
     (assoc d :type t)))
 
-(defn- parse-type [decl]
+(defn parse-type [decl]
   (let [tokens (-> decl str (str/split #":"))]
     (merge (ast/map->Type {}) (parse-type-tokens tokens))))
 
@@ -98,6 +98,9 @@
      (for [[decl value] pairs]
        (ast/->Assignment (parse-var-declaration decl)
                          (parse value))))))
+
+(defn- has-type? [s]
+  (-> s str (str/includes? ":")))
 
 (defn- parse-node [z]
   (let [node (zip/node z)]
@@ -170,10 +173,15 @@
           
           (first= node 'let)
           (let [[_ binds & body] node]
-            (ast/->LetBlock (map (fn [[decl value]]
-                                   (ast/->Assignment
-                                    (parse-var-declaration decl)
-                                    (parse value))) (partition 2 binds)) body))
+            (ast/->LetBlock
+             (map (fn [[decl value]]
+                    (if (= '<none> value)
+                      (parse-var-declaration decl)
+                      (ast/->Assignment
+                       (if-not (has-type? decl)
+                         decl
+                         (parse-var-declaration decl))
+                       value))) (partition 2 binds)) body))
 
           (first= node 'defstruct)
           (let [[_ name & members] node]
