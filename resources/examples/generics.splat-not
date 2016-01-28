@@ -1,0 +1,26 @@
+(!include stdio.h)
+(!include stdlib.h)
+(!include errno.h)
+(!include string.h)
+
+;;based on Learn C The Hard Way ex18
+
+(defn die:void [message:char:ptr:const]
+  (if errno
+    (perror message)
+    (printf "ERROR: %s\n" message))
+  (exit 1))
+
+(defn map:<t> [(fn-ptr fun:<t> [x:<t>]), coll:ptr:<t>, count:int]
+  (set! target:ptr<t> (malloc (* count (sizeof <t>))))
+  (for (set! i:int 0) (< i count) (set! i (+ i 1))
+    (aset! target i (fun (aget coll i)))))
+
+(defn main:int [argc:int argv:arr:char:ptr]
+  
+  (let [numbers:int:arr [1 2 4 6 10 0 -2]
+        count:int       (/ (sizeof numbers) (sizeof int))
+        inc:???         (fn int [x:int] (return (+ x 1)))]
+    (map:int inc numbers count))
+  
+  (return 0))
