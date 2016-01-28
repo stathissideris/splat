@@ -6,6 +6,8 @@
   - access/pass things by reference? Is that a thing in C?
   - make the function's last statement to automatically be returned if
     it isn't void
+  - change (if) into the ?: operator if both else and then are
+    expressions/literals (of the same type?)
+  - generics
   - closures
-  - generics?
-  - type inference?
+  - complete type inference?
