@@ -41,6 +41,11 @@
 
   (free sorted))
 
+#_(defn map:<t> [(fn-ptr fun:<t> [x:<t>]), coll:ptr:<t>, count:int]
+    (set! target:ptr<t> (malloc (* count (sizeof <t>))))
+    (for (set! i:int 0) (< i count) (set! i (+ i 1))
+         (aset! target i (fun (aget coll i)))))
+
 (defn main:int [argc:int argv:arr:char:ptr]
 
   (if (< argc 2) (die "Usage: fn-ptr 3 5 2 1 8"))
