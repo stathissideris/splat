@@ -1,34 +1,37 @@
 (ns splat.ast
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [camel-snake-kebab.core :refer :all]))
 
-(defrecord CodeFile [expressions])
-(defrecord NoOp [])
-(defrecord Statements [statements])
-(defrecord PreDirective [directive params])
-(defrecord Function [declaration params body])
-(defrecord Lambda [return params body])
-(defrecord FunctionCall [name params])
-(defrecord OpApplication [op params])
-(defrecord Declaration [name type])
-(defrecord FunctionPointer [return params])
-(defrecord DefType [declaration])
-(defrecord Type [types const? restrict?
+(defmacro ast-node [name params]
+  `(do
+     (defrecord ~name ~params)
+     (defn ~(symbol (str (->kebab-case name) "?")) [~'x]
+       (instance? ~name ~'x))))
+
+(ast-node CodeFile [expressions])
+(ast-node NoOp [])
+(ast-node Statements [statements])
+(ast-node PreDirective [directive params])
+(ast-node Function [declaration params body])
+(ast-node Lambda [return params body])
+(ast-node FunctionCall [name params])
+(ast-node OpApplication [op params])
+(ast-node Declaration [name type])
+(ast-node FunctionPointer [return params])
+(ast-node DefType [declaration])
+(ast-node Type [types const? restrict?
                  volatile? extern? pointer-level
                  void? struct? arrays])
-(defrecord StructDef [name members])
-(defrecord Assignment [declaration value])
-(defrecord ArrayAccess [name index])
-(defrecord ArraySet [name index value])
-(defrecord ForLoop [init pred next body])
-(defrecord IfThenElse [test then else])
-(defrecord WhileLoop [pred body])
-(defrecord LetBlock [bindings body])
-(defrecord Return [value])
+(ast-node StructDef [name members])
+(ast-node Assignment [declaration value])
+(ast-node ArrayAccess [name index])
+(ast-node ArraySet [name index value])
+(ast-node ForLoop [init pred next body])
+(ast-node IfThenElse [test then else])
+(ast-node WhileLoop [pred body])
+(ast-node LetBlock [bindings body])
+(ast-node Return [value])
 
-(defrecord FloatLiteral [x])
-(defrecord LongLiteral [x])
+(ast-node FloatLiteral [x])
+(ast-node LongLiteral [x])
 
-(defn code-file? [x] (instance? CodeFile x))
-(defn lambda? [x] (instance? Lambda x))
-(defn pre-directive? [x] (instance? PreDirective x))
-(defn statements? [x] (instance? Statements x))
