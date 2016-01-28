@@ -12,7 +12,27 @@
                (second clauses)
                (throw (IllegalArgumentException.
                        "cond requires an even number of forms")))
-             (cons 'cond (next (next clauses))))))})
+             (cons 'cond (next (next clauses))))))
+   '->
+   (fn [x & forms]
+     (loop [x x, forms forms]
+       (if forms
+         (let [form (first forms)
+               threaded (if (seq? form)
+                          (with-meta `(~(first form) ~x ~@(next form)) (meta form))
+                          (list form x))]
+           (recur threaded (next forms)))
+         x)))
+   '->>
+   (fn ->> [x & forms]
+     (loop [x x, forms forms]
+       (if forms
+         (let [form (first forms)
+               threaded (if (seq? form)
+                          (with-meta `(~(first form) ~@(next form)  ~x) (meta form))
+                          (list form x))]
+           (recur threaded (next forms)))
+         x)))})
 
 (defn clean-up-macro
   "The reader will qualify bare symbols when reading the macro, this

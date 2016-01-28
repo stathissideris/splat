@@ -6,6 +6,9 @@
          ~(when (next params)
             `(list ~@(next params)))))
 
+(defmacro deref-as [type p]
+  `(deref (cast ~(symbol (str type ":ptr")) ~p)))
+
 (defstruct Cons car:void:ptr cdr:struct:Cons:ptr)
 (deftype Cons:struct:Cons)
 
@@ -39,10 +42,22 @@
   ;;or with a macro!
   (print-str (list "foo" "bar" "baz"))
 
-  (doall (fn void [x:char:ptr] (printf "%s\n" x))
+  (doall (fn void [x:void:ptr] (printf "%s\n" x))
          (list "foo" "bar" "baz"))
 
-  (doall (fn void [x:int:ptr] (printf "%d\n" x))
-         (list 1 2 3 4 5))
-  
+  (let [one   1
+        two   2
+        three 3]
+    (doall (fn void [x:void:ptr]
+             (->> x (cast int:ptr) deref (* 2) (+ 100) (printf "%d\n")))
+           (list &one &two &three)))
+
+  ;;or, with deref-as
+  (let [one   1
+        two   2
+        three 3]
+    (doall (fn void [x:void:ptr]
+             (->> x (deref-as int) (* 2) (+ 100) (printf "%d\n")))
+           (list &one &two &three)))
+
   (return 0))
