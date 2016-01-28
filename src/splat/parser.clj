@@ -74,14 +74,16 @@
              (update d :types conj t))))))))
 
 (defn- parse-var-declaration [decl]
-  (let [tokens   (-> decl str (str/split #":"))
-        var-name (var-name (first tokens))
-        d        (ast/map->Declaration {:name var-name})
-        t        (merge (ast/map->Type {}) (parse-type-tokens (rest tokens)))
-        t        (if (pointer-name? (first tokens))
-                   (assoc t :pointer? true)
-                   t)]
-    (assoc d :type t)))
+  (if (ast/function-pointer? decl)
+   decl
+   (let [tokens   (-> decl str (str/split #":"))
+         var-name (var-name (first tokens))
+         d        (ast/map->Declaration {:name var-name})
+         t        (merge (ast/map->Type {}) (parse-type-tokens (rest tokens)))
+         t        (if (pointer-name? (first tokens))
+                    (assoc t :pointer? true)
+                    t)]
+     (assoc d :type t))))
 
 (defn parse-type [decl]
   (let [tokens (-> decl str (str/split #":"))]
