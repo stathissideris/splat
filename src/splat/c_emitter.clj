@@ -99,7 +99,8 @@
      (when volatile? "volatile")
      (when struct? "struct")]
     (map ->snake_case types)
-    [(apply str (repeat pointer-level \*))])))
+    (when pointer-level
+      [(apply str (repeat pointer-level \*))]))))
 
 (defmethod emit Declaration [{:keys [name type]}]
   (let [{:keys [arrays]} type]
