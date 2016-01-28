@@ -1,0 +1,50 @@
+(!include stdio.h)
+(!include stdlib.h)
+
+(defmacro list [& params]
+  `(cons ~(first params)
+         ~(when (next params)
+            `(list ~@(next params)))))
+
+(defmacro doall [fun coll]
+  `(let [(fn-ptr fun:void [x:void:ptr]) ~fun
+         coll:Cons:ptr                  ~coll]
+     (while coll
+       (fun (car coll))
+       (set! coll (cdr coll)))))
+
+(defstruct Cons car:void:ptr cdr:struct:Cons:ptr)
+(deftype Cons:struct:Cons)
+
+(defn cons:Cons:ptr [car:void:ptr cdr:Cons:ptr]
+  (let [n:Cons:ptr (malloc (sizeof Cons))]
+    (set! n->car car
+          n->cdr cdr)
+    (return n)))
+
+(defn car:void:ptr [x:Cons:ptr]
+  (return x->car))
+
+(defn cdr:void:ptr [x:Cons:ptr]
+  (return x->cdr))
+
+(defn print-str:void [c:Cons:ptr]
+  (printf "%s\n" (car c))
+  (when (cdr c)
+    (print-str (cdr c))))
+
+(defn main:int [argc:int argv:arr:char:ptr]
+
+  ;;build it manually:
+  ;;(set! c:Cons:ptr (cons "foo" (cons "bar" (cons "baz" nil))))
+
+  ;;or with a macro!
+  (print-str (list "foo" "bar" "baz"))
+
+  (doall (fn void [x:char:ptr] (printf "%s\n" x))
+         (list "foo" "bar" "baz"))
+
+  (doall (fn void [x:int:ptr] (printf "%d\n" x))
+         (list 1 2 3 4 5))
+  
+  (return 0))
