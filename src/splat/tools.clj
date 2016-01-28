@@ -15,13 +15,6 @@
 (defn transpile-file [input-file output-file]
   (let [source (util/read-edn input-file)]
     ;;TODO add warning for shadowing macros
-    (def aa (->> source
-                 macroexpand
-                 parser/parse-source))
-    (def ss (->> source
-                 macroexpand
-                 parser/parse-source
-                 compiler/compile-ast))
     (->> source
          macroexpand
          parser/parse-source
