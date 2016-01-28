@@ -1,12 +1,13 @@
 (ns dev
-  (:require [splat.tools :as tools]
-            [splat.parser :as parser]
-            [splat.c-emitter :as emitter]
-            [splat.ast :as ast]
-            [splat.util :as util]
+  (:require [clojure.pprint :refer [pprint]]
+            [clojure.string :as str]
             [clojure.tools.namespace.repl :refer [clear refresh-all]]
-            [clojure.pprint :refer [pprint]]
-            [me.raynes.fs :as fs]))
+            [me.raynes.fs :as fs]
+            [splat.ast :as ast]
+            [splat.c-emitter :as emitter]
+            [splat.parser :as parser]
+            [splat.tools :as tools]
+            [splat.util :as util]))
 
 (def ex-folder "resources/examples/")
 
@@ -30,7 +31,8 @@
       .waitFor))
 
 (defn compile-all []
-  (let [sources (fs/list-dir "resources/examples/")]
+  (let [sources (filter #(str/ends-with? (fs/base-name %) ".splat")
+                        (fs/list-dir "resources/examples/"))]
     (doseq [f sources]
       (print "Compiling" (fs/name f))
       (println " -" (compile-file f "resources/target/"))
