@@ -6,13 +6,6 @@
          ~(when (next params)
             `(list ~@(next params)))))
 
-(defmacro doall [fun coll]
-  `(let [(fn-ptr fun:void [x:void:ptr]) ~fun
-         coll:Cons:ptr                  ~coll]
-     (while coll
-       (fun (car coll))
-       (set! coll (cdr coll)))))
-
 (defstruct Cons car:void:ptr cdr:struct:Cons:ptr)
 (deftype Cons:struct:Cons)
 
@@ -32,6 +25,11 @@
   (printf "%s\n" (car c))
   (when (cdr c)
     (print-str (cdr c))))
+
+(defn doall:void [(fn-ptr fun:void [x:void:ptr]) coll:Cons:ptr]
+  (while coll
+    (fun (car coll))
+    (set! coll (cdr coll))))
 
 (defn main:int [argc:int argv:arr:char:ptr]
 
