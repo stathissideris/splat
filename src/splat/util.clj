@@ -10,7 +10,7 @@
   [filename]
   (with-open [rdr (io/reader (io/file filename))]
     (binding [reader/*data-readers* {'float ast/->FloatLiteral
-                                     'long ast/->LongLiteral}]
+                                     'long  ast/->LongLiteral}]
      (let [rdr (reader-types/indexing-push-back-reader (java.io.PushbackReader. rdr))]
        (try
          (loop [out []]
