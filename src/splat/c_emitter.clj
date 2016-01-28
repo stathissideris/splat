@@ -15,6 +15,8 @@
             Type
             StructDef
             Assignment
+            Cast
+
             ArrayAccess
             ArraySet
             FloatLiteral
@@ -121,6 +123,9 @@
 
 (defmethod emit Assignment [{:keys [declaration value]}]
   (spaces [(emit declaration) "=" (emit value)]))
+
+(defmethod emit Cast [{:keys [type expr]}]
+  (paren (str (paren (emit type)) " " (emit expr))))
 
 (defmethod emit DefType [{:keys [declaration]}]
   (str "typedef " (emit declaration)))

@@ -136,6 +136,10 @@
           (first= node 'set!)
           (parse-assignment node)
 
+          (first= node 'cast)
+          (let [[_ type expr] node]
+            (ast/->Cast (parse-type type) expr))
+
           (first= node 'deftype)
           (let [[_ decl] node]
             (if (or (symbol? decl) (string? decl))

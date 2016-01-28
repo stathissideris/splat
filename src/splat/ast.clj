@@ -20,8 +20,9 @@
 (ast-node FunctionPointer [return params])
 (ast-node DefType [declaration])
 (ast-node Type [types const? restrict?
-                 volatile? extern? pointer-level
-                 void? struct? arrays])
+                volatile? extern? pointer-level
+                void? struct? arrays])
+(ast-node Cast [type expr])
 (ast-node StructDef [name members])
 (ast-node Assignment [declaration value])
 (ast-node ArrayAccess [name index])
