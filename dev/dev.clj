@@ -6,7 +6,7 @@
             [splat.ast :as ast]
             [splat.c-emitter :as emitter]
             [splat.parser :as parser]
-            [splat.tools :as tools]
+            [splat.tools :as tools :refer [compile-file]]
             [splat.util :as util]))
 
 (def ex-folder "resources/examples/")
@@ -16,7 +16,7 @@
 
 (def read-file #'util/read-edn)
 (def transpile-file #'tools/transpile-file)
-(def compile-file #'tools/compile-file)
+(def run-file #'tools/run-file)
 (def parse-file #'parser/parse-file)
 (def parse-source #'parser/parse-source)
 (def macroexpand-source #'tools/macroexpand)
@@ -34,8 +34,9 @@
   (let [sources (filter #(str/ends-with? (fs/base-name %) ".splat")
                         (fs/list-dir "resources/examples/"))]
     (doseq [f sources]
-      (print "Compiling" (fs/name f))
-      (println " -" (compile-file f "resources/target/"))
+      (println "Compiling" (fs/name f))
+      (compile-file f "resources/target/")
+      (println)
       (format-c-file (str "resources/target/" (fs/name f) ".c")))))
 
 (defn compile-example [s]

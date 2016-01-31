@@ -1,11 +1,15 @@
 (ns splat.tools
   (:refer-clojure :exclude [macroexpand])
-  (:require [splat.macros :as macros]
-            [splat.parser :as parser]
-            [splat.compiler :as compiler]
-            [splat.util :as util]
+  (:require [clojure.string :as str]
+            [me.raynes.fs :as fs]
+            [nuka.exec :refer [run-command >print exit-code]]
+            [nuka.script.java :as script]
+            [nuka.script :refer [script call pipe chain-and chain-or block] :as s]
             [splat.c-emitter :as emitter]
-            [me.raynes.fs :as fs])) 
+            [splat.compiler :as compiler]
+            [splat.macros :as macros]
+            [splat.parser :as parser]
+            [splat.util :as util]))
 
 (defn macroexpand [source]
   (let [macros (macros/extract-macros source)
@@ -23,9 +27,12 @@
          (spit output-file))))
 
 (defn clang [in out]
-  (-> (Runtime/getRuntime)
-      (.exec (into-array String ["clang" (str in) "-g" "-o" (str out)]))
-      .waitFor))
+  (let [proc (run-command (call :clang {:g true, :o (str out)} (str in)))]
+    (>print proc) ;;establishes a consumer, non-blocking
+    (let [e (exit-code proc)]
+      (println "|")
+      (println "\\-> EXIT-CODE:" e)
+      e)))
 
 (defn compile-file
   ([input-file]
@@ -36,3 +43,14 @@
          compiled-file (fs/file out-dir (fs/name input-file))]
      (transpile-file input-file c-file)
      (clang c-file compiled-file))))
+
+(defn run-file
+  [input-file & params]
+  (let [compile-exit-code (compile-file input-file "/tmp")]
+    (if-not (zero? compile-exit-code)
+     (println "Compilation failed with code" compile-exit-code)
+     (do
+       (println "\nRunning...")
+       (let [proc (run-command (call (str (fs/file "/tmp" (fs/name input-file))) params))]
+         (>print proc)
+         (exit-code proc))))))
