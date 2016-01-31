@@ -42,14 +42,13 @@
   (if-not (or (seq? c) (list? c) (vector? c))
     (throw (ex-info (str "Not a list or vector: " (pr-str c)) {:v c}))
     c))
-
+(defn statements [st]
+  (let [st (remove nil? (check-coll st))]
+    (str (str/join ";\n" st) ";\n")))
 (defn double-quote [s] (str "\"" (check-str s) "\""))
 (defn single-quote [s] (str "'" (check-str s) "'"))
 (defn angle-quote [s] (str "<" (check-str s) ">"))
 (defn paren [s] (str "(" (check-str s) ")"))
-(defn statements [st]
-  (let [st (remove nil? (check-coll st))]
-    (str (str/join ";\n" st) ";\n")))
 (defn block [expr] (str "{\n" (statements (check-coll expr)) "}\n"))
 (defn commas [expr] (str/join ", " (remove nil? (check-coll expr))))
 (defn spaces [expr] (str/join " " (remove nil? (check-coll expr))))
@@ -57,16 +56,28 @@
 
 (defmulti emit class)
 
+(defn emit-statements [st]
+  (let [st (remove nil? (check-coll st))]
+    (if (= 1 (count st))
+      (-> st first emit)
+      (loop [st    st
+             code []]
+        (if-not (seq st)
+          (apply str code)
+          (recur (next st)
+                 (conj
+                  code
+                  (str (emit (first st))
+                       (when-not (ast/pre-directive? (first st))";")
+                       "\n"))))))))
+
 (defmethod emit CodeFile [n]
-  (statements (map emit (:expressions n))))
+  (emit-statements (:expressions n)))
 
 (defmethod emit NoOp [n] "")
 
 (defmethod emit Statements [s]
-  (let [s (:statements s)]
-    (if (= 1 (count s))
-      (-> s first emit)
-      (statements (map emit s)))))
+  (emit-statements (:statements s)))
 
 (defmethod emit PreDirective [{:keys [directive params]}]
   (str "#"
@@ -181,5 +192,3 @@
 (defmethod emit Boolean [x] (str x))
 (defmethod emit nil [_] "NULL")
 ;;(defmethod emit :default [n] (str n))
-
-
