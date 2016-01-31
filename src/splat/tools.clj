@@ -54,3 +54,23 @@
        (let [proc (run-command (call (str (fs/file "/tmp" (fs/name input-file))) params))]
          (>print proc)
          (exit-code proc))))))
+
+
+(defn- write-lines [file-path lines]
+  (with-open [wtr (clojure.java.io/writer file-path)]
+    (doseq [line lines]
+      (.write wtr line)
+      (.write wtr "\n"))))
+
+(defn eval-source
+  "Not a real eval (it only returns the exit code)"
+  [source & params]
+  (let [source-file (fs/temp-file "splat-eval")]
+    (->>
+     `[(~'!include ~'stdio.h)
+       (~'defn ~'main:int [~'argc:int ~'argv:arr:char:ptr]
+         ~@source
+         (~'return 0))]
+     (map pr-str)
+     (write-lines source-file))
+    (apply run-file source-file params))) ;;TODO remove the files
