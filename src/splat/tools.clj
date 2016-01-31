@@ -69,7 +69,7 @@
     (->>
      `[(~'!include ~'stdio.h)
        (~'defn ~'main:int [~'argc:int ~'argv:arr:char:ptr]
-         ~@source
+         ~source
          (~'return 0))]
      (map pr-str)
      (write-lines source-file))
