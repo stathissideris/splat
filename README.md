@@ -33,6 +33,8 @@ Lisp-like syntax to C transpiler
 
 * [LLVM IR is better than assembly](https://idea.popcount.org/2013-07-24-ir-is-better-than-assembly/)
 * [This thread](https://groups.google.com/forum/#!topic/clojure-dev/bex25u9hWIw)
+* [Object-Oriented Programming With ANSI-C](https://www.cs.rit.edu/~ats/books/ooc.pdf) (PDF)
+* [LLVM Language Reference Manual](http://llvm.org/docs/LangRef.html)
 
 ## License
 
