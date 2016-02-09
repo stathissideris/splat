@@ -17,6 +17,7 @@
 (ast-node FunctionCall [name params])
 (ast-node OpApplication [op params])
 (ast-node Declaration [name type])
+(ast-node Pointer [expression])
 (ast-node FunctionPointer [return params])
 (ast-node DefType [declaration])
 (ast-node Type [types const? restrict?
@@ -35,4 +36,3 @@
 
 (ast-node FloatLiteral [x])
 (ast-node LongLiteral [x])
-

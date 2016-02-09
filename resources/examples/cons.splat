@@ -58,6 +58,6 @@
         three 3]
     (doall (fn void [x:void:ptr]
              (->> x (deref-as int) (* 2) (+ 100) (printf "%d\n")))
-           (list &one &two &three)))
+           (list (ptr one) (ptr two) (ptr three))))
 
   (return 0))

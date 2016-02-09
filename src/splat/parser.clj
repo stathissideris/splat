@@ -176,7 +176,7 @@
               (throw (ex-info "\"if\" can only have 3 expressions, test, then and else"
                               {:node node})))
             (ast/->IfThenElse test then else))
-          
+
           (first= node 'let)
           (let [[_ binds & body] node]
             (ast/->LetBlock
@@ -202,7 +202,10 @@
 
           (first= node 'deref)
           (ast/->FunctionCall '* (rest node))
-          
+
+          (first= node 'ptr)
+          (ast/->FunctionCall '& (rest node))
+
           (function-call? node)
           (ast/->FunctionCall (first node) (rest node))
 
