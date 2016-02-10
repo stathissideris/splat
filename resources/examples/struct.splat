@@ -13,6 +13,10 @@
                      [(list k x)
                       (concat [(first v) (list k x)] (rest v))]) (partition 2 pairs))))
 
+(defmacro print-struct [x & members]
+  `(do
+     ~@(map (fn [[f m]] `(printf ~(str m ": " f "\n") (~m ~x))) (partition 2 members))))
+
 (defstruct Person name:char:ptr age:int height:int weight:int)
 
 (defn create-person:struct:Person:ptr
@@ -35,10 +39,13 @@
   (return who))
 
 (defn print-person:void [who:struct:Person:ptr]
-  (printf "Name: %s\n" (.-name who))
-  (printf "\tAge: %d\n" (.-age who))
-  (printf "\tHeight: %d\n" (.-height who))
-  (printf "\tWeight: %d\n" (.-weight who)))
+  (print-struct who "%s" .-name "%d" .-age "%d" .-height "%d" .-weight)
+  ;;becomes:
+  #_(do
+      (printf ".-name: %s\n" (.-name joe))
+      (printf ".-age: %d\n" (.-age joe))
+      (printf ".-height: %d\n" (.-height joe))
+      (printf ".-weight: %d\n" (.-weight joe))))
 
 (defn destroy-person:void [who:struct:Person:ptr]
   (free (.-name who))
@@ -64,8 +71,8 @@
   #_(set! (.-age joe) (+ (.-age joe) 20)
           (.-height joe) (- (.-height joe) 2)
           (.-weight joe) (+ (.-weight joe) 40))
-  (print-person joe)
 
+  (print-person joe)
   (destroy-person joe)
   (destroy-person frank)
   (return 0))
