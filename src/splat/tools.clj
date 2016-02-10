@@ -13,8 +13,10 @@
 
 (defn macroexpand [source]
   (let [macros (macros/extract-macros source)
-        source (macros/remove-macros source)]
-    (macros/apply-macros (merge macros/core-macros macros) source)))
+        source (macros/remove-macros source)
+        code (macros/apply-macros (merge macros/core-macros macros) source)]
+    ;;(clojure.pprint/pprint code)
+    code))
 
 (defn transpile-file [input-file output-file]
   (let [source (util/read-edn input-file)]

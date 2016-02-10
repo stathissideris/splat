@@ -5,16 +5,33 @@
 
 ;;based on Learn C The Hard Way ex16
 
+(defmacro assoc [x & pairs]
+  `(set! ~@(mapcat (fn [[k v]] [(list k x) v]) (partition 2 pairs))))
+
+(defmacro update [x & pairs]
+  `(set! ~@(mapcat (fn [[k v]]
+                     [(list k x)
+                      (concat [(first v) (list k x)] (rest v))]) (partition 2 pairs))))
+
 (defstruct Person name:char:ptr age:int height:int weight:int)
 
 (defn create-person:struct:Person:ptr
   [name:char:ptr age:int height:int weight:int]
   (set! who:struct:Person:ptr (malloc (sizeof struct:Person)))
   (assert (!= who nil))
-  (set! (.-name who)   (strdup name)
-        (.-age who)    age
-        (.-height who) height
-        (.-weight who) weight)
+  (assoc
+   who
+   .-name (strdup name)
+   .-age age
+   .-height height
+   .-weight weight)
+
+  ;;becomes:
+  #_(set! (.-name who)   (strdup name)
+          (.-age who)    age
+          (.-height who) height
+          (.-weight who) weight)
+
   (return who))
 
 (defn print-person:void [who:struct:Person:ptr]
@@ -37,9 +54,16 @@
   (printf "Frank is at memory location %p:\n" frank)
   (print-person frank)
 
-  (set! (.-age joe) (+ (.-age joe) 20)
-        (.-height joe) (- (.-height joe) 2)
-        (.-weight joe) (+ (.-weight joe) 40))
+  (update
+   joe
+   .-age (+ 20)
+   .-height (- 2)
+   .-weight (+ 40))
+
+  ;;becomes:
+  #_(set! (.-age joe) (+ (.-age joe) 20)
+          (.-height joe) (- (.-height joe) 2)
+          (.-weight joe) (+ (.-weight joe) 40))
   (print-person joe)
 
   (destroy-person joe)
