@@ -20,12 +20,15 @@
             ArrayAccess
             ArraySet
             FloatLiteral
+            MemberAccess
+            MemberPointerAccess
             LongLiteral
             ForLoop
             WhileLoop
             IfThenElse
             LetBlock
             Return]))
+
 (defn ->snake_case [s]
   (when s
     (let [guard "THISISASPLATARROW123456"] ;;TODO make less hacky
@@ -132,8 +135,8 @@
 (defmethod emit StructDef [{:keys [name members]}]
   (str "struct " (->snake_case name) (block (map emit members)) ";"))
 
-(defmethod emit Assignment [{:keys [declaration value]}]
-  (spaces [(emit declaration) "=" (emit value)]))
+(defmethod emit Assignment [{:keys [left value]}]
+  (spaces [(emit left) "=" (emit value)]))
 
 (defmethod emit Cast [{:keys [type expr]}]
   (paren (str (paren (emit type)) " " (emit expr))))
@@ -145,6 +148,12 @@
   (spaces [(emit (:type return))
            (paren (str "*" (emit (:name return))))
            (paren (commas (map emit params)))]))
+
+(defmethod emit MemberAccess [{:keys [member-name expression]}]
+  (str (paren (emit expression)) "." (->snake_case member-name)))
+
+(defmethod emit MemberPointerAccess [{:keys [member-name expression]}]
+  (str (paren (emit expression)) "->" (->snake_case member-name)))
 
 (defmethod emit ArrayAccess [{:keys [name index]}]
   (str (->snake_case name) "[" (emit index) "]"))

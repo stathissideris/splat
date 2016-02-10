@@ -14,15 +14,15 @@
 
 (defn cons:Cons:ptr [car:void:ptr cdr:Cons:ptr]
   (let [n:Cons:ptr (malloc (sizeof Cons))]
-    (set! n->car car
-          n->cdr cdr)
+    (set! (.-car n) car
+          (.-cdr n) cdr)
     (return n)))
 
 (defn car:void:ptr [x:Cons:ptr]
-  (return x->car))
+  (return (.-car x)))
 
 (defn cdr:void:ptr [x:Cons:ptr]
-  (return x->cdr))
+  (return (.-cdr x)))
 
 (defn print-str:void [c:Cons:ptr]
   (printf "%s\n" (car c))

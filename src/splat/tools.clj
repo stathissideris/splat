@@ -27,7 +27,7 @@
          (spit output-file))))
 
 (defn clang [in out]
-  (let [proc (run-command (call :clang {:g true, :o (str out)} (str in)))]
+  (let [proc (run-command (call :clang "-Wno-parentheses-equality" {:g true, :o (str out)} (str in)))]
     (>print proc) ;;establishes a consumer, non-blocking
     (let [e (exit-code proc)]
       (println "|")

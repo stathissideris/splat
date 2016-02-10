@@ -43,6 +43,14 @@
 (defn- pointer-name? [s]
   (-> s str (str/starts-with? "*")))
 
+(defn- member-pointer-access? [node]
+  (and (seq? node)
+       (some-> node first str (str/starts-with? ".-"))))
+
+(defn- member-access? [node]
+  (and (seq? node)
+       (some-> node first str (str/starts-with? "."))))
+
 (defn- parse-int [s]
   (try (Integer/parseInt s)
        (catch Exception _ nil)))
@@ -74,16 +82,15 @@
              (update d :types conj t))))))))
 
 (defn- parse-var-declaration [decl]
-  (if (ast/function-pointer? decl)
-   decl
-   (let [tokens   (-> decl str (str/split #":"))
-         var-name (var-name (first tokens))
-         d        (ast/map->Declaration {:name var-name})
-         t        (merge (ast/map->Type {}) (parse-type-tokens (rest tokens)))
-         t        (if (pointer-name? (first tokens))
-                    (assoc t :pointer? true)
-                    t)]
-     (assoc d :type t))))
+  (if ((some-fn ast/function-pointer?
+                ast/member-access?
+                ast/member-pointer-access?) decl)
+    decl
+    (let [tokens   (-> decl str (str/split #":"))
+          var-name (var-name (first tokens))
+          d        (ast/map->Declaration {:name var-name})
+          t        (merge (ast/map->Type {}) (parse-type-tokens (rest tokens)))]
+      (assoc d :type t))))
 
 (defn parse-type [decl]
   (let [tokens (-> decl str (str/split #":"))]
@@ -118,6 +125,14 @@
 
           (pre-directive? node)
           (ast/->PreDirective (first node) (rest node))
+
+          (member-pointer-access? node)
+          (let [[member-name expr] node]
+            (ast/->MemberPointerAccess (-> member-name str (subs 2) symbol) expr))
+
+          (member-access? node)
+          (let [[member-name expr] node]
+            (ast/->MemberAccess (-> member-name str (subs 1) symbol) expr))
 
           (first= node 'do)
           (let [[_ & body] node]

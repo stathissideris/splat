@@ -79,7 +79,7 @@
   (condp = (type v)
     FloatLiteral (types "float")
     LongLiteral  (types "long")
-    Double       (types "long") ;;TODO check this
+    Double       (types "double")
     String       (parser/parse-type 'char:ptr)
     (cond (integer? v) (parser/parse-type 'int)
           (vector? v)  (infer-array-type v)
@@ -96,12 +96,12 @@
    (util/ast-zipper source)
    (fn [zipper]
      (let [node (zip/node zipper)]
-       (if (and (ast/assignment? node) (symbol? (:declaration node)))
+       (if (and (ast/assignment? node) (symbol? (:left node)))
          (zip/replace
           zipper
-          (assoc node :declaration (ast/->Declaration
-                                    (:declaration node)
-                                    (value->type (:value node)))))
+          (assoc node :left (ast/->Declaration
+                             (:left node)
+                             (value->type (:value node)))))
          zipper)))))
 
 (defn compile-ast [source]
