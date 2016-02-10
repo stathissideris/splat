@@ -5,10 +5,10 @@
 
 ;;based on Learn C The Hard Way ex16
 
-(defmacro assoc [x & pairs]
+(defmacro assoc! [x & pairs]
   `(set! ~@(mapcat (fn [[k v]] [(list k x) v]) (partition 2 pairs))))
 
-(defmacro update [x & pairs]
+(defmacro update! [x & pairs]
   `(set! ~@(mapcat (fn [[k v]]
                      [(list k x)
                       (concat [(first v) (list k x)] (rest v))]) (partition 2 pairs))))
@@ -19,7 +19,7 @@
   [name:char:ptr age:int height:int weight:int]
   (set! who:struct:Person:ptr (malloc (sizeof struct:Person)))
   (assert (!= who nil))
-  (assoc
+  (assoc!
    who
    .-name (strdup name)
    .-age age
@@ -54,7 +54,7 @@
   (printf "Frank is at memory location %p:\n" frank)
   (print-person frank)
 
-  (update
+  (update!
    joe
    .-age (+ 20)
    .-height (- 2)
