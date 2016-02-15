@@ -28,6 +28,7 @@ Lisp-like syntax to C transpiler
   designed to simplify native code generation.
 * [clojure-metal](https://github.com/halgari/clojure-metal)
 * [cljs-terra](https://github.com/ohpauleez/cljs-terra)
+* [clojure-scheme](https://github.com/takeoutweight/clojure-scheme)
 
 ## Reading
 
