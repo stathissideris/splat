@@ -6,7 +6,7 @@ Lisp-like syntax to C transpiler
 
 * [Cgen](http://www.european-lisp-symposium.org/editions/2014/selgrad.pdf),
   also see p88 in
-  [this paper](http://www.european-lisp-symposium.org/editions/2014/ELS2014.pdf).
+  [this paper](http://www.european-lisp-symposium.org/editions/2014/ELS2014.pdf). (dead links)
 * [Clasp](https://github.com/drmeister/clasp)
 * [Amplify](http://voodoo-slide.blogspot.co.uk/2010/01/amplifying-c.html). [On Hacker News](https://news.ycombinator.com/item?id=11054089).
   [code](https://github.com/deplinenoise/c-amplify)
@@ -26,9 +26,13 @@ Lisp-like syntax to C transpiler
   etc.
 * [mjolnir](https://github.com/halgari/mjolnir) is a Clojure library
   designed to simplify native code generation.
-* [clojure-metal](https://github.com/halgari/clojure-metal)
+* [clojure-metal](https://github.com/halgari/clojure-metal) (dead link)
 * [cljs-terra](https://github.com/ohpauleez/cljs-terra)
 * [clojure-scheme](https://github.com/takeoutweight/clojure-scheme)
+* [Ferret](https://ferret-lang.org/) is a free software lisp
+  implementation (Clojure-inspired) designed to be used in real time
+  embedded control systems. Ferret lisp compiles down to self
+  contained C++11.
 
 ## Reading
 
